@@ -2,16 +2,10 @@
   "version": "8",
   "dialect": "postgres",
   "id": "5d3f6341-535e-4750-aa22-d0efa9eeef3c",
-  "prevIds": [
-    "00000000-0000-0000-0000-000000000000"
-  ],
+  "prevIds": ["00000000-0000-0000-0000-000000000000"],
   "ddl": [
     {
-      "values": [
-        "ESSENTIALS",
-        "LEISURE",
-        "INVESTMENT"
-      ],
+      "values": ["ESSENTIALS", "LEISURE", "INVESTMENT"],
       "name": "category",
       "entityType": "enums",
       "schema": "public"
@@ -225,14 +219,10 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "userId"
-      ],
+      "columns": ["userId"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
+      "columnsTo": ["id"],
       "onUpdate": "NO ACTION",
       "onDelete": "CASCADE",
       "name": "expenses_userId_users_id_fkey",
@@ -241,9 +231,7 @@
       "table": "expenses"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "expenses_pkey",
       "schema": "public",
@@ -251,9 +239,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "id"
-      ],
+      "columns": ["id"],
       "nameExplicit": false,
       "name": "users_pkey",
       "schema": "public",
@@ -262,9 +248,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "email"
-      ],
+      "columns": ["email"],
       "nullsNotDistinct": false,
       "name": "users_email_key",
       "schema": "public",

@@ -10,7 +10,7 @@ app.use(cors());
 app.use(helmet());
 
 app.get('/health', (_req: Request, res: Response): void => {
-    res.json({ status: 'ok' });
+  res.json({ status: 'ok' });
 });
 
 export default app;
