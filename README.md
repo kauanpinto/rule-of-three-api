@@ -63,6 +63,12 @@ npm run dev
 
 A API estará disponível em: `http://localhost:3000`
 
+## Endpoints
+
+| Método | Rota | Descrição |
+|---|---|---|
+| POST | `/auth/register` | Cadastra um novo usuário |
+
 ## Autor
 
 **Kauan Fernando**

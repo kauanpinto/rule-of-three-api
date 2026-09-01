@@ -25,6 +25,11 @@
     "sourceMap": true,
     "declaration": false,
 
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    },
+
     "rootDir": "./src",
     "outDir": "./dist"
   },
