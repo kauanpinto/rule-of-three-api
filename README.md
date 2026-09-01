@@ -17,11 +17,14 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 - [Node.js](https://nodejs.org/) 22.x
 - [Express](https://expressjs.com/) ^5
 - [TypeScript](https://www.typescriptlang.org/) ^6
+- [Drizzle ORM](https://orm.drizzle.team/) 1.0.0-rc.4
+- [PostgreSQL](https://www.postgresql.org/) 18
 
 ## Requisitos
 
 - Node.js 22.x
 - npm
+- Conta na [Neon](https://neon.tech/)
 
 ## Como executar
 
@@ -46,7 +49,13 @@ Copie o arquivo de exemplo e preencha com seus valores:
 cp .env.example .env
 ```
 
-4. Executar o projeto:
+4. Executar as migrações no banco:
+
+```bash
+npx drizzle-kit migrate
+```
+
+5. Executar o projeto:
 
 ```bash
 npm run dev
