@@ -70,6 +70,7 @@ A API estará disponível em: `http://localhost:3000`
 | POST | `/auth/register` | Cadastra um novo usuário |
 | POST | `/auth/login` | Autentica o usuário e retorna um cookie de sessão |
 | POST | `/auth/logout` | Encerra a sessão do usuário, removendo o cookie |
+| POST | `/expenses` | Cria um novo gasto (requer autenticação) |
 
 ## Autor
 
