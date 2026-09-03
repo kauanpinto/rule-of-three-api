@@ -1,6 +1,6 @@
-import { db } from '@/db/client';
-import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { db } from '@/db/client.js';
+import { users } from '@/db/schema.js';
 
 type CreateUserInput = {
   name: string;
@@ -17,6 +17,8 @@ export async function findUserByEmail(email: string) {
 
 export async function createUser(data: CreateUserInput) {
   const [newUser] = await db.insert(users).values(data).returning();
+
+  if (!newUser) throw new Error('Não foi possível criar o usuário');
 
   return newUser;
 }
