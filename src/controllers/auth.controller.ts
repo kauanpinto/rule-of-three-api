@@ -1,7 +1,7 @@
-import type { Request, Response } from 'express';
 import { ZodError } from 'zod';
-import { registerSchema, loginSchema } from '@/schemas/auth.schema';
-import { registerUser, loginUser } from '@/services/auth.service';
+import { registerUser, loginUser } from '@/services/auth.service.js';
+import { registerSchema, loginSchema } from '@/schemas/auth.schema.js';
+import type { Request, Response } from 'express';
 
 export async function register(req: Request, res: Response) {
   try {

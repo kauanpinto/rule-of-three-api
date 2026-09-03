@@ -1,10 +1,10 @@
-import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import express from 'express';
 import cookieParser from 'cookie-parser';
+import authRoutes from '@/routes/auth.routes.js';
+import expenseRoutes from '@/routes/expense.routes.js';
 import type { Application, Request, Response } from 'express';
-import authRoutes from '@/routes/auth.routes';
-import expenseRoutes from '@/routes/expense.routes';
 
 const app: Application = express();
 

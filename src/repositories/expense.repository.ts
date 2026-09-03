@@ -1,5 +1,5 @@
-import { db } from '@/db/client';
-import { expenses } from '@/db/schema';
+import { db } from '@/db/client.js';
+import { expenses } from '@/db/schema.js';
 
 type CreateExpenseInput = {
   userId: string;

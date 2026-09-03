@@ -1,5 +1,5 @@
-import { createExpense as createExpenseRecord } from '@/repositories/expense.repository';
-import type { CreateExpenseInput } from '@/schemas/expense.schema';
+import { createExpense as createExpenseRecord } from '@/repositories/expense.repository.js';
+import type { CreateExpenseInput } from '@/schemas/expense.schema.js';
 
 export async function createExpense(userId: string, input: CreateExpenseInput) {
   const amount = String(input.amount);

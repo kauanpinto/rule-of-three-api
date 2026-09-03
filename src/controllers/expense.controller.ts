@@ -1,7 +1,7 @@
-import type { Request, Response } from 'express';
 import { ZodError } from 'zod';
-import { createExpenseSchema } from '@/schemas/expense.schema';
-import { createExpense as createExpenseService } from '@/services/expense.service';
+import { createExpenseSchema } from '@/schemas/expense.schema.js';
+import { createExpense as createExpenseService } from '@/services/expense.service.js';
+import type { Request, Response } from 'express';
 
 export async function createExpense(req: Request, res: Response) {
   try {

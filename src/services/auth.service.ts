@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { findUserByEmail, createUser } from '@/repositories/user.repository';
-import type { RegisterInput, LoginInput } from '@/schemas/auth.schema';
+import { findUserByEmail, createUser } from '@/repositories/user.repository.js';
+import type { RegisterInput, LoginInput } from '@/schemas/auth.schema.js';
 
 export async function registerUser(input: RegisterInput) {
   const existingUser = await findUserByEmail(input.email);
