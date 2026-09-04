@@ -72,6 +72,7 @@ A API estará disponível em: `http://localhost:3000`
 | POST | `/auth/logout` | Encerra a sessão do usuário, removendo o cookie |
 | POST | `/expenses` | Cria um novo gasto |
 | GET | `/expenses` | Lista os gastos do usuário autenticado |
+| PATCH | `/expenses/:id` | Atualiza parcialmente um gasto do usuário |
 
 ## Autor
 

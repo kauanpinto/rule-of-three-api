@@ -11,6 +11,11 @@ const createExpenseSchema = z.object({
 
 export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
 
+const updateExpenseSchema = createExpenseSchema.partial();
+
+export type UpdateExpenseInput = z.infer<typeof updateExpenseSchema>;
+
 export const expenseSchema = {
   createExpenseSchema,
+  updateExpenseSchema,
 };
