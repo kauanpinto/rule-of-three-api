@@ -5,5 +5,6 @@ import { expenseController } from '@/controllers/expense.controller.js';
 const expenseRoutes = Router();
 
 expenseRoutes.post('/', requireAuth, expenseController.createExpense);
+expenseRoutes.get('/', requireAuth, expenseController.getAllExpenses);
 
 export default expenseRoutes;

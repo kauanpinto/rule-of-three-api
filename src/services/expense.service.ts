@@ -15,6 +15,13 @@ async function createExpense(userId: string, input: CreateExpenseInput) {
   return newExpense;
 }
 
+async function getAllExpenses(userId: string) {
+  const userExpenses = await expenseRepository.getAllExpensesByUserId(userId);
+
+  return userExpenses;
+}
+
 export const expenseService = {
   createExpense,
+  getAllExpenses,
 };

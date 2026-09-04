@@ -25,6 +25,24 @@ async function createExpense(req: Request, res: Response) {
   }
 }
 
+async function getAllExpenses(req: Request, res: Response) {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).json({ message: 'Não autenticado' });
+      return;
+    }
+
+    const listExpenses = await expenseService.getAllExpenses(userId);
+
+    res.status(200).json(listExpenses);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro interno no servidor' });
+  }
+}
+
 export const expenseController = {
   createExpense,
+  getAllExpenses,
 };
