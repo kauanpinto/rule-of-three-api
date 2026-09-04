@@ -6,7 +6,12 @@ import type { Request, Response } from 'express';
 async function createExpense(req: Request, res: Response) {
   try {
     const validatedData = expenseSchema.createExpenseSchema.parse(req.body);
-    const userId = (req as any).userId;
+    const userId = req.userId;
+
+    if (!userId) {
+      res.status(401).json({ message: 'Não autenticado' });
+      return;
+    }
 
     const newExpense = await expenseService.createExpense(userId, validatedData);
 

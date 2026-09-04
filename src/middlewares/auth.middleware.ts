@@ -12,7 +12,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string };
-    (req as any).userId = payload.userId;
+    req.userId = payload.userId;
     next();
   } catch (error) {
     res.status(401).json({ message: 'Token inválido' });
