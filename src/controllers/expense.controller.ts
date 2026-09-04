@@ -1,14 +1,14 @@
 import { ZodError } from 'zod';
-import { createExpenseSchema } from '@/schemas/expense.schema.js';
-import { createExpense as createExpenseService } from '@/services/expense.service.js';
+import { expenseSchema } from '@/schemas/expense.schema.js';
+import { expenseService } from '@/services/expense.service.js';
 import type { Request, Response } from 'express';
 
-export async function createExpense(req: Request, res: Response) {
+async function createExpense(req: Request, res: Response) {
   try {
-    const validatedData = createExpenseSchema.parse(req.body);
+    const validatedData = expenseSchema.createExpenseSchema.parse(req.body);
     const userId = (req as any).userId;
 
-    const newExpense = await createExpenseService(userId, validatedData);
+    const newExpense = await expenseService.createExpense(userId, validatedData);
 
     res.status(201).json(newExpense);
   } catch (error) {
@@ -19,3 +19,7 @@ export async function createExpense(req: Request, res: Response) {
     }
   }
 }
+
+export const expenseController = {
+  createExpense,
+};

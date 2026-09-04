@@ -1,12 +1,12 @@
 import { ZodError } from 'zod';
-import { registerUser, loginUser } from '@/services/auth.service.js';
-import { registerSchema, loginSchema } from '@/schemas/auth.schema.js';
+import { authService } from '@/services/auth.service.js';
+import { authSchema } from '@/schemas/auth.schema.js';
 import type { Request, Response } from 'express';
 
-export async function register(req: Request, res: Response) {
+async function register(req: Request, res: Response) {
   try {
-    const validatedData = registerSchema.parse(req.body);
-    const newUser = await registerUser(validatedData);
+    const validatedData = authSchema.registerSchema.parse(req.body);
+    const newUser = await authService.registerUser(validatedData);
 
     res.status(201).json(newUser);
   } catch (error) {
@@ -20,10 +20,10 @@ export async function register(req: Request, res: Response) {
   }
 }
 
-export async function login(req: Request, res: Response) {
+async function login(req: Request, res: Response) {
   try {
-    const validatedData = loginSchema.parse(req.body);
-    const token = await loginUser(validatedData);
+    const validatedData = authSchema.loginSchema.parse(req.body);
+    const token = await authService.loginUser(validatedData);
 
     res.cookie('token', token, {
       httpOnly: true,
@@ -44,7 +44,7 @@ export async function login(req: Request, res: Response) {
   }
 }
 
-export async function logout(req: Request, res: Response) {
+async function logout(req: Request, res: Response) {
   res.clearCookie('token', {
     httpOnly: true,
     secure: true,
@@ -53,3 +53,9 @@ export async function logout(req: Request, res: Response) {
 
   res.status(200).json({ message: 'Logout realizado com sucesso' });
 }
+
+export const authController = {
+  register,
+  login,
+  logout,
+};

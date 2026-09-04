@@ -9,8 +9,12 @@ type CreateExpenseInput = {
   category: 'ESSENTIALS' | 'LEISURE' | 'INVESTMENT';
 };
 
-export async function createExpense(data: CreateExpenseInput) {
+async function createExpense(data: CreateExpenseInput) {
   const [createdExpense] = await db.insert(expenses).values(data).returning();
 
   return createdExpense;
 }
+
+export const expenseRepository = {
+  createExpense,
+};

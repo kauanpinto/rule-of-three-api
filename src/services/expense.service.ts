@@ -1,10 +1,10 @@
-import { createExpense as createExpenseRecord } from '@/repositories/expense.repository.js';
+import { expenseRepository } from '@/repositories/expense.repository.js';
 import type { CreateExpenseInput } from '@/schemas/expense.schema.js';
 
-export async function createExpense(userId: string, input: CreateExpenseInput) {
+async function createExpense(userId: string, input: CreateExpenseInput) {
   const amount = String(input.amount);
 
-  const newExpense = await createExpenseRecord({
+  const newExpense = await expenseRepository.createExpense({
     userId,
     title: input.title,
     description: input.description,
@@ -14,3 +14,7 @@ export async function createExpense(userId: string, input: CreateExpenseInput) {
 
   return newExpense;
 }
+
+export const expenseService = {
+  createExpense,
+};

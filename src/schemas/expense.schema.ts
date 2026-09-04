@@ -2,7 +2,7 @@ import * as z from 'zod';
 
 const categoryEnum = z.enum(['ESSENTIALS', 'LEISURE', 'INVESTMENT']);
 
-export const createExpenseSchema = z.object({
+const createExpenseSchema = z.object({
   title: z.string().min(1, 'Nome muito curto'),
   description: z.string().optional(),
   amount: z.number().positive('Gasto deve ser maior que zero'),
@@ -10,3 +10,7 @@ export const createExpenseSchema = z.object({
 });
 
 export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
+
+export const expenseSchema = {
+  createExpenseSchema,
+};

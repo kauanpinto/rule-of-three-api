@@ -1,17 +1,17 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { findUserByEmail, createUser } from '@/repositories/user.repository.js';
+import { userRepository } from '@/repositories/user.repository.js';
 import type { RegisterInput, LoginInput } from '@/schemas/auth.schema.js';
 
-export async function registerUser(input: RegisterInput) {
-  const existingUser = await findUserByEmail(input.email);
+async function registerUser(input: RegisterInput) {
+  const existingUser = await userRepository.findUserByEmail(input.email);
   if (existingUser) throw new Error('Email já está em uso');
 
   const passwordHashed = await bcrypt.hash(input.password, 10);
   const income = String(input.income);
 
-  const newUser = await createUser({
+  const newUser = await userRepository.createUser({
     name: input.name,
     email: input.email,
     password: passwordHashed,
@@ -23,8 +23,8 @@ export async function registerUser(input: RegisterInput) {
   return safeUser;
 }
 
-export async function loginUser(input: LoginInput) {
-  const existingUser = await findUserByEmail(input.email);
+async function loginUser(input: LoginInput) {
+  const existingUser = await userRepository.findUserByEmail(input.email);
   if (!existingUser) throw new Error('Credenciais inválidas');
 
   const isPasswordValid = await bcrypt.compare(input.password, existingUser.password);
@@ -34,3 +34,8 @@ export async function loginUser(input: LoginInput) {
 
   return token;
 }
+
+export const authService = {
+  registerUser,
+  loginUser,
+};
