@@ -6,4 +6,5 @@ export const authLimiter = rateLimit({
   message: { message: 'Muitas tentativas. Tente novamente mais tarde.' },
   standardHeaders: true,
   legacyHeaders: false,
+  skip: () => process.env.NODE_ENV === 'test',
 });

@@ -19,12 +19,15 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 - [TypeScript](https://www.typescriptlang.org/) ^6
 - [Drizzle ORM](https://orm.drizzle.team/) 1.0.0-rc.4
 - [PostgreSQL](https://www.postgresql.org/) 18
+- [Vitest](https://vitest.dev/) ^5.0.0
+- [Supertest](https://github.com/ladjs/supertest) ^7.2.2
 
 ## Requisitos
 
 - Node.js 22.x
 - npm
 - Conta na [Neon](https://neon.tech/)
+- Uma segunda branch no Neon, dedicada a testes (opcional, só necessário se for rodar a suíte de testes)
 
 ## Como executar
 
@@ -62,6 +65,34 @@ npm run dev
 ```
 
 A API estará disponível em: `http://localhost:3000`
+
+## Testes
+
+O projeto usa Vitest + Supertest para testes de integração dos endpoints.
+
+### Configuração
+
+Os testes rodam contra um banco separado do de desenvolvimento, para evitar apagar ou corromper dados reais.
+
+1. No dashboard do Neon, crie uma branch dedicada a testes (ex: `test`)
+
+2. Copie o arquivo de exemplo e preencha com a string da branch de teste:
+
+```bash
+cp .env.example .env.test
+```
+
+3. Aplique as migrations nela:
+
+```bash
+NODE_ENV=test npx drizzle-kit migrate
+```
+
+4. Executando:
+
+```bash
+npm run test
+```
 
 ## Endpoints
 
