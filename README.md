@@ -74,6 +74,7 @@ A API estará disponível em: `http://localhost:3000`
 | GET | `/expenses` | Lista os gastos do usuário autenticado |
 | PATCH | `/expenses/:id` | Atualiza parcialmente um gasto do usuário autenticado |
 | DELETE | `/expenses/:id` | Remove um gasto do usuário autenticado |
+| GET | `/dashboard/summary` | Retorna o resumo 50/30/20 do usuário autenticado |
 
 ## Autor
 
