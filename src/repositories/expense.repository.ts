@@ -32,8 +32,18 @@ async function updateExpenseById(id: string, userId: string, data: UpdateExpense
   return updatedExpense;
 }
 
+async function deleteExpenseById(id: string, userId: string) {
+  const [deletedExpense] = await db
+    .delete(expenses)
+    .where(and(eq(expenses.id, id), eq(expenses.userId, userId)))
+    .returning();
+
+  return deletedExpense;
+}
+
 export const expenseRepository = {
   createExpense,
   getAllExpensesByUserId,
   updateExpenseById,
+  deleteExpenseById,
 };

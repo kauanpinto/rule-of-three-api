@@ -34,8 +34,15 @@ async function updateExpense(id: string, userId: string, input: UpdateExpenseInp
   return updatedExpense;
 }
 
+async function deleteExpense(id: string, userId: string) {
+  const deletedExpense = await expenseRepository.deleteExpenseById(id, userId);
+
+  return deletedExpense;
+}
+
 export const expenseService = {
   createExpense,
   getAllExpenses,
   updateExpense,
+  deleteExpense,
 };

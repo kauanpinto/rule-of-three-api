@@ -75,8 +75,37 @@ async function updateExpense(req: Request, res: Response) {
   }
 }
 
+async function deleteExpense(req: Request, res: Response) {
+  try {
+    const userId = req.userId;
+    const id = req.params.id;
+
+    if (!userId) {
+      res.status(401).json({ message: 'Não autenticado' });
+      return;
+    }
+
+    if (!id || Array.isArray(id)) {
+      res.status(400).json({ message: 'ID inválido' });
+      return;
+    }
+
+    const deletedExpense = await expenseService.deleteExpense(id, userId);
+
+    if (!deletedExpense) {
+      res.status(404).json({ message: 'Gasto não encontrado' });
+      return;
+    }
+
+    res.status(200).json({ message: 'Gasto deletado com sucesso' });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro interno no servidor' });
+  }
+}
+
 export const expenseController = {
   createExpense,
   getAllExpenses,
   updateExpense,
+  deleteExpense,
 };
