@@ -66,6 +66,18 @@ npm run dev
 
 A API estará disponível em: `http://localhost:3000`
 
+## Scripts
+
+| Comando | Descrição |
+|---|---|
+| `npm run dev` | Sobe o servidor em modo desenvolvimento, com reload automático |
+| `npm run build` | Compila o TypeScript para JavaScript (pasta `dist/`) |
+| `npm start` | Executa a versão compilada (produção, requer `npm run build` antes) |
+| `npm run typecheck` | Verifica erros de tipo sem gerar arquivos |
+| `npm run test` | Roda a suíte de testes automatizados |
+| `npm run format` | Formata todo o código com Prettier |
+| `npm run format:check` | Verifica se o código está formatado, sem alterar arquivos |
+
 ## Testes
 
 O projeto usa Vitest + Supertest para testes de integração dos endpoints.
