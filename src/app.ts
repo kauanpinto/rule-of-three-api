@@ -1,3 +1,4 @@
+import '@/config/env.js';
 import cors from 'cors';
 import helmet from 'helmet';
 import express from 'express';
