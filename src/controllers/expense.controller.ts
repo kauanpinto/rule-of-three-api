@@ -20,6 +20,7 @@ async function createExpense(req: Request, res: Response) {
     if (error instanceof ZodError) {
       res.status(400).json({ message: 'Erro de validação', issues: error.issues });
     } else {
+      console.error(error);
       res.status(500).json({ message: 'Erro interno no servidor' });
     }
   }
