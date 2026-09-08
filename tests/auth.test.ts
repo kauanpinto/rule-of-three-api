@@ -3,6 +3,7 @@ import request from 'supertest';
 import app from '@/app.js';
 import { db } from '@/db/client.js';
 import { users } from '@/db/schema.js';
+import { registerAndLogin } from './helpers.js';
 
 describe('POST /auth/register', () => {
   beforeEach(async () => {
@@ -182,5 +183,64 @@ describe('POST /auth/logout', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers['set-cookie']).toBeDefined();
+  });
+});
+
+describe('PATCH /auth/change-password', () => {
+  beforeEach(async () => {
+    await db.delete(users);
+  });
+
+  it('deve trocar a senha com dados válidos', async () => {
+    const cookie = await registerAndLogin();
+
+    const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
+      currentPassword: 'teste123',
+      newPassword: 'novaSenha456',
+    });
+
+    expect(response.status).toBe(200);
+  });
+
+  it('deve retornar 401 se a senha atual estiver errada', async () => {
+    const cookie = await registerAndLogin('test2@test.com');
+
+    const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
+      currentPassword: 'senhaErrada',
+      newPassword: 'novaSenha456',
+    });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('deve retornar 400 se a nova senha for igual à atual', async () => {
+    const cookie = await registerAndLogin('test3@test.com');
+
+    const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
+      currentPassword: 'teste123',
+      newPassword: 'teste123',
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 400 se a nova senha for muito curta', async () => {
+    const cookie = await registerAndLogin('test4@test.com');
+
+    const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
+      currentPassword: 'teste123',
+      newPassword: 'senha',
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 401 se o usuário não estiver autenticado', async () => {
+    const response = await request(app).patch('/auth/change-password').send({
+      currentPassword: 'teste123',
+      newPassword: 'novaSenha456',
+    });
+
+    expect(response.status).toBe(401);
   });
 });
