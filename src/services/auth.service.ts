@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { userRepository } from '@/repositories/user.repository.js';
-import type { RegisterInput, LoginInput } from '@/schemas/auth.schema.js';
+import type { RegisterInput, LoginInput, ChangePasswordInput } from '@/schemas/auth.schema.js';
 
 async function registerUser(input: RegisterInput) {
   const existingUser = await userRepository.findUserByEmail(input.email);
@@ -34,7 +34,22 @@ async function loginUser(input: LoginInput) {
   return token;
 }
 
+async function changePassword(userId: string, input: ChangePasswordInput) {
+  if (input.currentPassword === input.newPassword) throw new Error('SAME_PASSWORD');
+
+  const existingUser = await userRepository.findUserById(userId);
+  if (!existingUser) throw new Error('USER_NOT_FOUND');
+
+  const isPasswordValid = await bcrypt.compare(input.currentPassword, existingUser.password);
+  if (!isPasswordValid) throw new Error('INVALID_CURRENT_PASSWORD');
+
+  const hashedPassword = await bcrypt.hash(input.newPassword, 10);
+
+  await userRepository.updatePassword(userId, hashedPassword);
+}
+
 export const authService = {
   registerUser,
   loginUser,
+  changePassword,
 };

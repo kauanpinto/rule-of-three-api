@@ -29,8 +29,19 @@ async function createUser(data: CreateUserInput) {
   return newUser;
 }
 
+async function updatePassword(userId: string, newPassword: string) {
+  const [updatedUser] = await db
+    .update(users)
+    .set({ password: newPassword })
+    .where(eq(users.id, userId))
+    .returning();
+
+  return updatedUser;
+}
+
 export const userRepository = {
   findUserByEmail,
   findUserById,
   createUser,
+  updatePassword,
 };

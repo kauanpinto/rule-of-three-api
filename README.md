@@ -113,6 +113,7 @@ npm run test
 | POST | `/auth/register` | Cadastra um novo usuário |
 | POST | `/auth/login` | Autentica o usuário e retorna um cookie de sessão |
 | POST | `/auth/logout` | Encerra a sessão do usuário, removendo o cookie |
+| PATCH | `/auth/change-password` | Altera a senha do usuário autenticado (exige senha atual) |
 | POST | `/expenses` | Cria um novo gasto |
 | GET | `/expenses` | Lista os gastos do usuário autenticado |
 | PATCH | `/expenses/:id` | Atualiza parcialmente um gasto do usuário autenticado |

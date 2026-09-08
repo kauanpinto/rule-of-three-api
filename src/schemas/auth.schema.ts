@@ -16,7 +16,15 @@ const loginSchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 
+const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Senha é obrigatória'),
+  newPassword: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
+});
+
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+
 export const authSchema = {
   registerSchema,
   loginSchema,
+  changePasswordSchema,
 };
