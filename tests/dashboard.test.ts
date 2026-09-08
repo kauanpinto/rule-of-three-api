@@ -39,7 +39,7 @@ describe('GET /dashboard/summary', () => {
   });
 
   it('deve calcular o resumo 50/30/20 corretamente mesmo sem gastos', async () => {
-    const cookie = await registerAndLogin();
+    const cookie = await registerAndLogin('test2@test.com');
 
     const response = await request(app).get('/dashboard/summary').set('Cookie', cookie);
 
@@ -54,7 +54,7 @@ describe('GET /dashboard/summary', () => {
   });
 
   it('deve retornar o gasto maior que o limite da regra 50/30/20', async () => {
-    const cookie = await registerAndLogin();
+    const cookie = await registerAndLogin('test3@test.com');
 
     await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto essencial',
