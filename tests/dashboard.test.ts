@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import request from 'supertest';
 import app from '@/app.js';
 import { db } from '@/db/client.js';
@@ -9,6 +9,10 @@ describe('GET /dashboard/summary', () => {
   beforeEach(async () => {
     await db.delete(expenses);
     await db.delete(users);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('deve calcular o resumo 50/30/20 corretamente', async () => {

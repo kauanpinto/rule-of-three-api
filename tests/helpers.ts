@@ -1,7 +1,11 @@
 import request from 'supertest';
+import { vi } from 'vitest';
 import app from '@/app.js';
+import * as emailLib from '@/lib/email.js';
 
-export async function registerAndLogin(email = 'teste@teste.com') {
+export async function registerAndLogin(email = 'test@test.com') {
+  vi.spyOn(emailLib, 'sendWelcomeEmail').mockResolvedValue(undefined);
+
   await request(app).post('/auth/register').send({
     name: 'Teste',
     email,

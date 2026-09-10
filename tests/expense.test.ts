@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import request from 'supertest';
 import app from '@/app.js';
 import { db } from '@/db/client.js';
@@ -9,6 +9,10 @@ describe('POST /expenses', () => {
   beforeEach(async () => {
     await db.delete(expenses);
     await db.delete(users);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('deve criar um gasto com dados válidos', async () => {
@@ -98,6 +102,10 @@ describe('GET /expenses', () => {
     await db.delete(users);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it('deve listar os gastos do usuário autenticado', async () => {
     const cookie = await registerAndLogin();
 
@@ -172,6 +180,10 @@ describe('PATCH /expenses/:id', () => {
   beforeEach(async () => {
     await db.delete(expenses);
     await db.delete(users);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('deve atualizar o gasto do usuário autenticado', async () => {
@@ -259,7 +271,7 @@ describe('PATCH /expenses/:id', () => {
   it('deve retornar 401 se o usuário não estiver autenticado', async () => {
     const cookie = await registerAndLogin('test5@test.com');
 
-    const spent = await request(app).post('/expenses').set('Cookie', cookie).send({
+    const spent = await request(app).post('/expenses').send({
       title: 'Gasto',
       amount: 100,
       category: 'LEISURE',
@@ -335,6 +347,10 @@ describe('DELETE /expenses/:id', () => {
   beforeEach(async () => {
     await db.delete(expenses);
     await db.delete(users);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('deve deletar o gasto do usuário autenticado', async () => {
