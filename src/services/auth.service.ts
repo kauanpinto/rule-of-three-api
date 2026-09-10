@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { sendWelcomeEmail } from '@/lib/email.js';
 import { userRepository } from '@/repositories/user.repository.js';
 import type { RegisterInput, LoginInput, ChangePasswordInput } from '@/schemas/auth.schema.js';
 
@@ -18,6 +19,12 @@ async function registerUser(input: RegisterInput) {
   });
 
   const { password, ...safeUser } = newUser;
+
+  try {
+    await sendWelcomeEmail(newUser.email, newUser.name);
+  } catch (error) {
+    console.error('Falha ao enviar email de boas-vindas:', error);
+  }
 
   return safeUser;
 }

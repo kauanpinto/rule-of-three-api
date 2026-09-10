@@ -15,12 +15,13 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 ## Tecnologias
 
 - [Node.js](https://nodejs.org/) 22.x
-- [Express](https://expressjs.com/) ^5
-- [TypeScript](https://www.typescriptlang.org/) ^6
-- [Drizzle ORM](https://orm.drizzle.team/) 1.0.0-rc.4
+- [Express](https://expressjs.com/) ^5.2.1
+- [TypeScript](https://www.typescriptlang.org/) ^6.0.3
+- [Drizzle ORM](https://orm.drizzle.team/) ^1.0.0-rc.4
 - [PostgreSQL](https://www.postgresql.org/) 18
 - [Vitest](https://vitest.dev/) ^5.0.0
 - [Supertest](https://github.com/ladjs/supertest) ^7.2.2
+- [Resend](https://resend.com/) ^6.26.0
 
 ## Requisitos
 
@@ -28,6 +29,7 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 - npm
 - Conta na [Neon](https://neon.tech/)
 - Uma segunda branch no Neon, dedicada a testes (opcional, só necessário se for rodar a suíte de testes)
+- Conta na [Resend](https://resend.com/)
 
 ## Como executar
 
@@ -80,7 +82,7 @@ A API estará disponível em: `http://localhost:3000`
 
 ## Testes
 
-O projeto usa Vitest + Supertest para testes de integração dos endpoints.
+O projeto usa [Vitest](https://vitest.dev/) + [Supertest](https://github.com/ladjs/supertest) para testes de integração dos endpoints.
 
 ### Configuração
 
