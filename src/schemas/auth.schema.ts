@@ -2,7 +2,7 @@ import * as z from 'zod';
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Nome muito curto'),
-  email: z.email('Email inválido'),
+  email: z.email('E-mail inválido'),
   password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
   income: z.number().positive('Renda deve ser maior que zero'),
 });
@@ -23,8 +23,22 @@ const changePasswordSchema = z.object({
 
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 
+const forgotPasswordSchema = z.object({
+  email: z.email('E-mail inválido'),
+});
+
+export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+
+const resetPasswordSchema = z.object({
+  password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
+});
+
+export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+
 export const authSchema = {
   registerSchema,
   loginSchema,
   changePasswordSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
 };

@@ -1,6 +1,10 @@
 import { Router } from 'express';
 import { authController } from '@/controllers/auth.controller.js';
-import { authLimiter, accountActionLimiter } from '@/middlewares/rateLimit.middleware.js';
+import {
+  authLimiter,
+  accountActionLimiter,
+  publicSensitiveLimiter,
+} from '@/middlewares/rateLimit.middleware.js';
 import { requireAuth } from '@/middlewares/auth.middleware.js';
 
 const authRoutes = Router();
@@ -14,5 +18,7 @@ authRoutes.patch(
   accountActionLimiter,
   authController.changePassword,
 );
+authRoutes.post('/forgot-password', publicSensitiveLimiter, authController.forgotPassword);
+authRoutes.post('/reset-password', publicSensitiveLimiter, authController.resetPassword);
 
 export default authRoutes;

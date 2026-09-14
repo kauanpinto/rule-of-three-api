@@ -21,6 +21,16 @@ async function findUserById(id: string) {
   return existingUser;
 }
 
+async function findUserByResetTokenHash(hashedToken: string) {
+  const [existingUser] = await db
+    .select()
+    .from(users)
+    .where(eq(users.resetPasswordTokenHash, hashedToken))
+    .limit(1);
+
+  return existingUser;
+}
+
 async function createUser(data: CreateUserInput) {
   const [newUser] = await db.insert(users).values(data).returning();
 
@@ -39,9 +49,38 @@ async function updatePassword(userId: string, newPassword: string) {
   return updatedUser;
 }
 
+async function saveResetToken(userId: string, resetTokenHash: string, resetTokenExpiresAt: Date) {
+  const [updatedUser] = await db
+    .update(users)
+    .set({
+      resetPasswordTokenHash: resetTokenHash,
+      resetPasswordExpiresAt: resetTokenExpiresAt,
+    })
+    .where(eq(users.id, userId))
+    .returning();
+
+  return updatedUser;
+}
+
+async function clearResetToken(userId: string) {
+  const [updatedUser] = await db
+    .update(users)
+    .set({
+      resetPasswordTokenHash: null,
+      resetPasswordExpiresAt: null,
+    })
+    .where(eq(users.id, userId))
+    .returning();
+
+  return updatedUser;
+}
+
 export const userRepository = {
   findUserByEmail,
   findUserById,
+  findUserByResetTokenHash,
   createUser,
   updatePassword,
+  saveResetToken,
+  clearResetToken,
 };

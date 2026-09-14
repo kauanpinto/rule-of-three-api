@@ -8,6 +8,8 @@ export const users = pgTable('users', {
   email: varchar({ length: 255 }).notNull().unique(),
   password: varchar({ length: 255 }).notNull(),
   income: numeric({ precision: 12, scale: 2 }).notNull(),
+  resetPasswordTokenHash: varchar({ length: 255 }),
+  resetPasswordExpiresAt: timestamp(),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp()
     .defaultNow()

@@ -1,8 +1,15 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { sendWelcomeEmail } from '@/lib/email.js';
+import crypto from 'node:crypto';
+import { sendWelcomeEmail, sendPasswordResetEmail } from '@/lib/email.js';
 import { userRepository } from '@/repositories/user.repository.js';
-import type { RegisterInput, LoginInput, ChangePasswordInput } from '@/schemas/auth.schema.js';
+import type {
+  RegisterInput,
+  LoginInput,
+  ChangePasswordInput,
+  ForgotPasswordInput,
+  ResetPasswordInput,
+} from '@/schemas/auth.schema.js';
 
 async function registerUser(input: RegisterInput) {
   const existingUser = await userRepository.findUserByEmail(input.email);
@@ -55,8 +62,48 @@ async function changePassword(userId: string, input: ChangePasswordInput) {
   await userRepository.updatePassword(userId, hashedPassword);
 }
 
+async function forgotPassword(input: ForgotPasswordInput) {
+  const existingUser = await userRepository.findUserByEmail(input.email);
+  if (!existingUser) return;
+
+  const token = crypto.randomBytes(32).toString('hex');
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+  await userRepository.saveResetToken(existingUser.id, hashedToken, expiresAt);
+
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
+
+  try {
+    await sendPasswordResetEmail(existingUser.email, resetLink);
+  } catch (error) {
+    console.error('Falha ao enviar email de redefinição de senha:', error);
+  }
+}
+
+async function resetPassword(token: string, input: ResetPasswordInput) {
+  const hashedToken = await crypto.createHash('sha256').update(token).digest('hex');
+
+  const existingUser = await userRepository.findUserByResetTokenHash(hashedToken);
+  if (!existingUser) throw new Error('INVALID_TOKEN');
+
+  if (!existingUser.resetPasswordExpiresAt || existingUser.resetPasswordExpiresAt < new Date())
+    throw new Error('EXPIRED_TOKEN');
+
+  const isSamePassword = await bcrypt.compare(input.password, existingUser.password);
+
+  if (isSamePassword) throw new Error('SAME_PASSWORD');
+
+  const hashedPassword = await bcrypt.hash(input.password, 10);
+
+  await userRepository.updatePassword(existingUser.id, hashedPassword);
+  await userRepository.clearResetToken(existingUser.id);
+}
+
 export const authService = {
   registerUser,
   loginUser,
   changePassword,
+  forgotPassword,
+  resetPassword,
 };

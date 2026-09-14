@@ -44,7 +44,7 @@ async function login(req: Request, res: Response) {
   }
 }
 
-async function logout(req: Request, res: Response) {
+async function logout(_req: Request, res: Response) {
   res.clearCookie('token', {
     httpOnly: true,
     secure: true,
@@ -78,9 +78,52 @@ async function changePassword(req: Request, res: Response) {
   }
 }
 
+async function forgotPassword(req: Request, res: Response) {
+  try {
+    const validatedData = authSchema.forgotPasswordSchema.parse(req.body);
+    await authService.forgotPassword(validatedData);
+
+    res.status(200).json({ message: 'Se o email existir, você receberá um link de redefinição' });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ message: 'Erro de validação', issues: error.issues });
+    } else {
+      res.status(500).json({ message: 'Erro interno no servidor' });
+    }
+  }
+}
+
+async function resetPassword(req: Request, res: Response) {
+  try {
+    const token = req.query.token;
+
+    if (typeof token !== 'string') return res.status(400).json({ message: 'Token inválido' });
+    if (!token) return res.status(404).json({ message: 'Token inválido' });
+
+    const validatedData = authSchema.resetPasswordSchema.parse(req.body);
+    await authService.resetPassword(token, validatedData);
+
+    res.status(200).json({ message: 'Senha redefinida com sucesso' });
+  } catch (error) {
+    if (error instanceof ZodError) {
+      res.status(400).json({ message: 'Erro de validação', issues: error.issues });
+    } else if (error instanceof Error && error.message === 'EXPIRED_TOKEN') {
+      res.status(400).json({ message: 'Token expirado' });
+    } else if (error instanceof Error && error.message === 'INVALID_TOKEN') {
+      res.status(400).json({ message: 'Token inválido' });
+    } else if (error instanceof Error && error.message === 'SAME_PASSWORD') {
+      res.status(400).json({ message: 'A nova senha não pode ser igual à atual' });
+    } else {
+      res.status(500).json({ message: 'Erro interno no servidor' });
+    }
+  }
+}
+
 export const authController = {
   register,
   login,
   logout,
   changePassword,
+  forgotPassword,
+  resetPassword,
 };
