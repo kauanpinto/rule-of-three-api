@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import request from 'supertest';
 import app from '@/app.js';
+import { eq } from 'drizzle-orm';
 import { db } from '@/db/client.js';
 import { users } from '@/db/schema.js';
 import * as emailLib from '@/lib/email.js';
@@ -283,5 +284,255 @@ describe('PATCH /auth/change-password', () => {
     });
 
     expect(response.status).toBe(401);
+  });
+});
+
+describe('POST /auth/forgot-password', () => {
+  beforeEach(async () => {
+    await db.delete(users);
+    vi.spyOn(emailLib, 'sendPasswordResetEmail').mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('deve chamar o envio de email de redefinição para um usuário existente', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test@test.com',
+      password: 'teste123',
+      income: 3000,
+    });
+
+    const sendResetEmailSpy = vi
+      .spyOn(emailLib, 'sendPasswordResetEmail')
+      .mockResolvedValue(undefined);
+
+    const response = await request(app).post('/auth/forgot-password').send({
+      email: 'test@test.com',
+    });
+
+    expect(response.status).toBe(200);
+    expect(sendResetEmailSpy).toHaveBeenCalled();
+  });
+
+  it('deve retornar 200 mesmo se o email não existir, sem enviar nenhum email', async () => {
+    const sendResetEmailSpy = vi
+      .spyOn(emailLib, 'sendPasswordResetEmail')
+      .mockResolvedValue(undefined);
+
+    const response = await request(app).post('/auth/forgot-password').send({
+      email: 'naoexiste@teste.com',
+    });
+
+    expect(response.status).toBe(200);
+    expect(sendResetEmailSpy).not.toHaveBeenCalled();
+  });
+
+  it('deve retornar 400 se o email for inválido', async () => {
+    const response = await request(app).post('/auth/forgot-password').send({
+      email: 'emailinvalido',
+    });
+
+    expect(response.status).toBe(400);
+  });
+});
+
+describe('POST /auth/reset-password', () => {
+  beforeEach(async () => {
+    await db.delete(users);
+    vi.spyOn(emailLib, 'sendPasswordResetEmail').mockResolvedValue(undefined);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('deve redefinir a senha com dados válidos', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test@test.com',
+      password: 'teste123',
+      income: 3000,
+    });
+
+    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+
+    await request(app).post('/auth/forgot-password').send({
+      email: 'test@test.com',
+    });
+
+    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const url = new URL(resetLink);
+    const token = url.searchParams.get('token');
+
+    const response = await request(app).post(`/auth/reset-password?token=${token}`).send({
+      password: 'teste12345',
+    });
+
+    expect(response.status).toBe(200);
+    expect(token).toBeTruthy();
+  });
+
+  it('deve redefinir a senha com dados válidos e fazer login com a nova senha', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test@test.com',
+      password: 'teste123',
+      income: 3000,
+    });
+
+    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+
+    await request(app).post('/auth/forgot-password').send({
+      email: 'test@test.com',
+    });
+
+    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const url = new URL(resetLink);
+    const token = url.searchParams.get('token');
+
+    await request(app).post(`/auth/reset-password?token=${token}`).send({
+      password: 'teste12345',
+    });
+
+    const response = await request(app).post('/auth/login').send({
+      email: 'test@test.com',
+      password: 'teste12345',
+    });
+
+    expect(response.status).toBe(200);
+  });
+
+  it('deve retornar 400 se a senha for muito curta', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test2@test.com',
+      password: 'teste123',
+      income: 3000,
+    });
+
+    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+
+    await request(app).post('/auth/forgot-password').send({
+      email: 'test2@test.com',
+    });
+
+    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const url = new URL(resetLink);
+    const token = url.searchParams.get('token');
+
+    const response = await request(app).post(`/auth/reset-password?token=${token}`).send({
+      password: 'teste',
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 400 se a nova senha for igual a atual', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test3@test.com',
+      password: 'teste123',
+      income: 3000,
+    });
+
+    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+
+    await request(app).post('/auth/forgot-password').send({
+      email: 'test3@test.com',
+    });
+
+    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const url = new URL(resetLink);
+    const token = url.searchParams.get('token');
+
+    const response = await request(app).post(`/auth/reset-password?token=${token}`).send({
+      password: 'teste123',
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 401 se tentar logar com a senha antiga', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test4@test.com',
+      password: 'teste123',
+      income: 3000,
+    });
+
+    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+
+    await request(app).post('/auth/forgot-password').send({
+      email: 'test4@test.com',
+    });
+
+    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const url = new URL(resetLink);
+    const token = url.searchParams.get('token');
+
+    await request(app).post(`/auth/reset-password?token=${token}`).send({
+      password: 'teste12345',
+    });
+
+    const response = await request(app).post('/auth/login').send({
+      email: 'test@test.com',
+      password: 'teste123',
+    });
+
+    expect(response.status).toBe(401);
+  });
+
+  it('deve retornar 400 se o token for inválido', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test5@test.com',
+      password: 'teste123',
+      income: 3000,
+    });
+
+    await request(app).post('/auth/forgot-password').send({
+      email: 'test5@test.com',
+    });
+
+    const token = 'invalidtoken123456789';
+
+    const response = await request(app).post(`/auth/reset-password?token=${token}`).send({
+      password: 'teste12345',
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 400 se o token estiver expirado', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test6@test.com',
+      password: 'teste123',
+      income: 3000,
+    });
+
+    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+
+    await request(app).post('/auth/forgot-password').send({
+      email: 'test6@test.com',
+    });
+
+    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const url = new URL(resetLink);
+    const token = url.searchParams.get('token');
+
+    await db
+      .update(users)
+      .set({ resetPasswordExpiresAt: new Date(Date.now() - 1000) })
+      .where(eq(users.email, 'test6@test.com'));
+
+    const response = await request(app).post(`/auth/reset-password?token=${token}`).send({
+      password: 'teste12345',
+    });
+
+    expect(response.status).toBe(400);
   });
 });
