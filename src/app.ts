@@ -1,8 +1,8 @@
 import '@/config/env.js';
-import cors from 'cors';
 import helmet from 'helmet';
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import corsConfig from '@/config/cors.js';
 import authRoutes from '@/routes/auth.routes.js';
 import expenseRoutes from '@/routes/expense.routes.js';
 import dashboardRoutes from '@/routes/dashboard.routes.js';
@@ -11,7 +11,7 @@ import type { Application, Request, Response } from 'express';
 const app: Application = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(corsConfig);
 app.use(helmet());
 app.use(cookieParser());
 
