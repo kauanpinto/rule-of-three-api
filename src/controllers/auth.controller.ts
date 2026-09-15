@@ -1,4 +1,5 @@
 import { ZodError } from 'zod';
+import { AppError } from '@/errors/AppError.js';
 import { authService } from '@/services/auth.service.js';
 import { authSchema } from '@/schemas/auth.schema.js';
 import type { Request, Response } from 'express';
@@ -12,8 +13,8 @@ async function register(req: Request, res: Response) {
   } catch (error) {
     if (error instanceof ZodError) {
       res.status(400).json({ message: 'Erro de validação', issues: error.issues });
-    } else if (error instanceof Error) {
-      res.status(409).json({ message: error.message });
+    } else if (error instanceof AppError) {
+      res.status(error.status).json({ message: error.message });
     } else {
       res.status(500).json({ message: 'Erro interno no servidor' });
     }
@@ -36,8 +37,8 @@ async function login(req: Request, res: Response) {
   } catch (error) {
     if (error instanceof ZodError) {
       res.status(400).json({ message: 'Erro de validação', issues: error.issues });
-    } else if (error instanceof Error) {
-      res.status(401).json({ message: error.message });
+    } else if (error instanceof AppError) {
+      res.status(error.status).json({ message: error.message });
     } else {
       res.status(500).json({ message: 'Erro interno no servidor' });
     }
@@ -66,12 +67,8 @@ async function changePassword(req: Request, res: Response) {
   } catch (error) {
     if (error instanceof ZodError) {
       res.status(400).json({ message: 'Erro de validação', issues: error.issues });
-    } else if (error instanceof Error && error.message === 'INVALID_CURRENT_PASSWORD') {
-      res.status(401).json({ message: 'Senha atual incorreta' });
-    } else if (error instanceof Error && error.message === 'USER_NOT_FOUND') {
-      res.status(404).json({ message: 'Usuário não encontrado' });
-    } else if (error instanceof Error && error.message === 'SAME_PASSWORD') {
-      res.status(400).json({ message: 'A nova senha não pode ser igual à atual' });
+    } else if (error instanceof AppError) {
+      res.status(error.status).json({ message: error.message });
     } else {
       res.status(500).json({ message: 'Erro interno no servidor' });
     }
@@ -107,12 +104,8 @@ async function resetPassword(req: Request, res: Response) {
   } catch (error) {
     if (error instanceof ZodError) {
       res.status(400).json({ message: 'Erro de validação', issues: error.issues });
-    } else if (error instanceof Error && error.message === 'EXPIRED_TOKEN') {
-      res.status(400).json({ message: 'Token expirado' });
-    } else if (error instanceof Error && error.message === 'INVALID_TOKEN') {
-      res.status(400).json({ message: 'Token inválido' });
-    } else if (error instanceof Error && error.message === 'SAME_PASSWORD') {
-      res.status(400).json({ message: 'A nova senha não pode ser igual à atual' });
+    } else if (error instanceof AppError) {
+      res.status(error.status).json({ message: error.message });
     } else {
       res.status(500).json({ message: 'Erro interno no servidor' });
     }

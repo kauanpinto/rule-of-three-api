@@ -1,4 +1,5 @@
 import { ZodError } from 'zod';
+import { AppError } from '@/errors/AppError.js';
 import { userService } from '@/services/user.service.js';
 import { userSchema } from '@/schemas/user.schema.js';
 import type { Request, Response } from 'express';
@@ -15,10 +16,8 @@ async function deleteAccount(req: Request, res: Response) {
   } catch (error) {
     if (error instanceof ZodError) {
       res.status(400).json({ message: 'Erro de validação', issues: error.issues });
-    } else if (error instanceof Error && error.message === 'INVALID_CURRENT_PASSWORD') {
-      res.status(401).json({ message: 'Senha atual incorreta' });
-    } else if (error instanceof Error && error.message === 'USER_NOT_FOUND') {
-      res.status(404).json({ message: 'Usuário não encontrado' });
+    } else if (error instanceof AppError) {
+      res.status(error.status).json({ message: error.message });
     } else {
       res.status(500).json({ message: 'Erro interno no servidor' });
     }
