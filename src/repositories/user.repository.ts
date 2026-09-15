@@ -39,6 +39,12 @@ async function createUser(data: CreateUserInput) {
   return newUser;
 }
 
+async function deleteUser(userId: string) {
+  const [deletedUser] = await db.delete(users).where(eq(users.id, userId)).returning();
+
+  return deletedUser;
+}
+
 async function updatePassword(userId: string, newPassword: string) {
   const [updatedUser] = await db
     .update(users)
@@ -80,6 +86,7 @@ export const userRepository = {
   findUserById,
   findUserByResetTokenHash,
   createUser,
+  deleteUser,
   updatePassword,
   saveResetToken,
   clearResetToken,

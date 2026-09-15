@@ -82,7 +82,7 @@ async function forgotPassword(input: ForgotPasswordInput) {
 }
 
 async function resetPassword(token: string, input: ResetPasswordInput) {
-  const hashedToken = await crypto.createHash('sha256').update(token).digest('hex');
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
   const existingUser = await userRepository.findUserByResetTokenHash(hashedToken);
   if (!existingUser) throw new Error('INVALID_TOKEN');

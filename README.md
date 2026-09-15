@@ -110,6 +110,8 @@ npm run test
 
 ## Endpoints
 
+### Autenticação
+
 | Método | Rota | Descrição |
 |---|---|---|
 | POST | `/auth/register` | Cadastra um novo usuário |
@@ -118,10 +120,26 @@ npm run test
 | PATCH | `/auth/change-password` | Altera a senha do usuário autenticado (exige senha atual) |
 | POST | `/auth/forgot-password` | Envia o link de redefinição de senha |
 | POST | `/auth/reset-password` | Altera a senha do usuário existente não autenticado |
+
+### Usuário
+
+| Método | Rota | Descrição |
+|---|---|---|
+| DELETE | `/users/me` | Exclui a conta do usuário autenticado (exige senha) |
+
+### Gastos
+
+| Método | Rota | Descrição |
+|---|---|---|
 | POST | `/expenses` | Cria um novo gasto |
 | GET | `/expenses` | Lista os gastos do usuário autenticado |
 | PATCH | `/expenses/:id` | Atualiza parcialmente um gasto do usuário autenticado |
 | DELETE | `/expenses/:id` | Remove um gasto do usuário autenticado |
+
+### Dashboard
+
+| Método | Rota | Descrição |
+|---|---|---|
 | GET | `/dashboard/summary` | Retorna o resumo 50/30/20 do usuário autenticado |
 
 ## Autor
