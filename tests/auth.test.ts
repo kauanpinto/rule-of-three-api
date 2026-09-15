@@ -291,6 +291,7 @@ describe('POST /auth/forgot-password', () => {
   beforeEach(async () => {
     await db.delete(users);
     vi.spyOn(emailLib, 'sendPasswordResetEmail').mockResolvedValue(undefined);
+    vi.spyOn(emailLib, 'sendWelcomeEmail').mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -343,6 +344,7 @@ describe('POST /auth/reset-password', () => {
   beforeEach(async () => {
     await db.delete(users);
     vi.spyOn(emailLib, 'sendPasswordResetEmail').mockResolvedValue(undefined);
+    vi.spyOn(emailLib, 'sendWelcomeEmail').mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -357,7 +359,9 @@ describe('POST /auth/reset-password', () => {
       income: 3000,
     });
 
-    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+    const sendResetEmailSpy = vi
+      .spyOn(emailLib, 'sendPasswordResetEmail')
+      .mockResolvedValue(undefined);
 
     await request(app).post('/auth/forgot-password').send({
       email: 'test@test.com',
@@ -389,7 +393,9 @@ describe('POST /auth/reset-password', () => {
       income: 3000,
     });
 
-    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+    const sendResetEmailSpy = vi
+      .spyOn(emailLib, 'sendPasswordResetEmail')
+      .mockResolvedValue(undefined);
 
     await request(app).post('/auth/forgot-password').send({
       email: 'test@test.com',
@@ -425,7 +431,9 @@ describe('POST /auth/reset-password', () => {
       income: 3000,
     });
 
-    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+    const sendResetEmailSpy = vi
+      .spyOn(emailLib, 'sendPasswordResetEmail')
+      .mockResolvedValue(undefined);
 
     await request(app).post('/auth/forgot-password').send({
       email: 'test2@test.com',
@@ -456,7 +464,9 @@ describe('POST /auth/reset-password', () => {
       income: 3000,
     });
 
-    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+    const sendResetEmailSpy = vi
+      .spyOn(emailLib, 'sendPasswordResetEmail')
+      .mockResolvedValue(undefined);
 
     await request(app).post('/auth/forgot-password').send({
       email: 'test3@test.com',
@@ -487,7 +497,9 @@ describe('POST /auth/reset-password', () => {
       income: 3000,
     });
 
-    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+    const sendResetEmailSpy = vi
+      .spyOn(emailLib, 'sendPasswordResetEmail')
+      .mockResolvedValue(undefined);
 
     await request(app).post('/auth/forgot-password').send({
       email: 'test4@test.com',
@@ -508,7 +520,7 @@ describe('POST /auth/reset-password', () => {
     });
 
     const response = await request(app).post('/auth/login').send({
-      email: 'test@test.com',
+      email: 'test4@test.com',
       password: 'teste123',
     });
 
@@ -544,7 +556,9 @@ describe('POST /auth/reset-password', () => {
       income: 3000,
     });
 
-    const sendResetEmailSpy = vi.spyOn(emailLib, 'sendPasswordResetEmail');
+    const sendResetEmailSpy = vi
+      .spyOn(emailLib, 'sendPasswordResetEmail')
+      .mockResolvedValue(undefined);
 
     await request(app).post('/auth/forgot-password').send({
       email: 'test6@test.com',
