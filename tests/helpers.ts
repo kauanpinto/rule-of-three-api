@@ -3,7 +3,7 @@ import { vi } from 'vitest';
 import app from '@/app.js';
 import * as emailLib from '@/lib/email.js';
 
-export async function registerAndLogin(email = 'test@test.com') {
+export async function registerAndLogin(email = 'test@test.com'): Promise<string> {
   vi.spyOn(emailLib, 'sendWelcomeEmail').mockResolvedValue(undefined);
 
   await request(app).post('/auth/register').send({
@@ -18,5 +18,17 @@ export async function registerAndLogin(email = 'test@test.com') {
     password: 'teste123',
   });
 
-  return response.headers['set-cookie'][0].split(';')[0];
+  const cookie = response.headers['set-cookie']?.[0];
+
+  if (!cookie) {
+    throw new Error('Login falhou ao gerar cookie de sessão nos testes');
+  }
+
+  const sessionCookie = cookie.split(';')[0];
+
+  if (!sessionCookie) {
+    throw new Error('Cookie de sessão inválido nos testes');
+  }
+
+  return sessionCookie;
 }

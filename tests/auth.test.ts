@@ -363,7 +363,13 @@ describe('POST /auth/reset-password', () => {
       email: 'test@test.com',
     });
 
-    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const [call] = sendResetEmailSpy.mock.calls;
+
+    if (!call) {
+      throw new Error('Email de recuperação não foi enviado');
+    }
+
+    const resetLink = call[1];
     const url = new URL(resetLink);
     const token = url.searchParams.get('token');
 
@@ -389,7 +395,13 @@ describe('POST /auth/reset-password', () => {
       email: 'test@test.com',
     });
 
-    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const [call] = sendResetEmailSpy.mock.calls;
+
+    if (!call) {
+      throw new Error('Email de recuperação não foi enviado');
+    }
+
+    const resetLink = call[1];
     const url = new URL(resetLink);
     const token = url.searchParams.get('token');
 
@@ -419,7 +431,13 @@ describe('POST /auth/reset-password', () => {
       email: 'test2@test.com',
     });
 
-    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const [call] = sendResetEmailSpy.mock.calls;
+
+    if (!call) {
+      throw new Error('Email de recuperação não foi enviado');
+    }
+
+    const resetLink = call[1];
     const url = new URL(resetLink);
     const token = url.searchParams.get('token');
 
@@ -444,7 +462,13 @@ describe('POST /auth/reset-password', () => {
       email: 'test3@test.com',
     });
 
-    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const [call] = sendResetEmailSpy.mock.calls;
+
+    if (!call) {
+      throw new Error('Email de recuperação não foi enviado');
+    }
+
+    const resetLink = call[1];
     const url = new URL(resetLink);
     const token = url.searchParams.get('token');
 
@@ -469,7 +493,13 @@ describe('POST /auth/reset-password', () => {
       email: 'test4@test.com',
     });
 
-    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const [call] = sendResetEmailSpy.mock.calls;
+
+    if (!call) {
+      throw new Error('Email de recuperação não foi enviado');
+    }
+
+    const resetLink = call[1];
     const url = new URL(resetLink);
     const token = url.searchParams.get('token');
 
@@ -520,7 +550,13 @@ describe('POST /auth/reset-password', () => {
       email: 'test6@test.com',
     });
 
-    const resetLink = sendResetEmailSpy.mock.calls[0][1];
+    const [call] = sendResetEmailSpy.mock.calls;
+
+    if (!call) {
+      throw new Error('Email de recuperação não foi enviado');
+    }
+
+    const resetLink = call[1];
     const url = new URL(resetLink);
     const token = url.searchParams.get('token');
 

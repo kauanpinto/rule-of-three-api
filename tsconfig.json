@@ -29,10 +29,9 @@
       "@/*": ["./src/*"]
     },
 
-    "rootDir": "./src",
     "outDir": "./dist"
   },
 
   "include": ["src/**/*", "tests/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "exclude": ["node_modules", "dist"]
 }
