@@ -9,8 +9,7 @@ async function createExpense(req: Request, res: Response) {
     const userId = req.userId;
 
     if (!userId) {
-      res.status(401).json({ message: 'Não autenticado' });
-      return;
+      return res.status(401).json({ message: 'Não autenticado' });
     }
 
     const newExpense = await expenseService.createExpense(userId, validatedData);
@@ -31,8 +30,7 @@ async function getAllExpenses(req: Request, res: Response) {
     const userId = req.userId;
 
     if (!userId) {
-      res.status(401).json({ message: 'Não autenticado' });
-      return;
+      return res.status(401).json({ message: 'Não autenticado' });
     }
 
     const listExpenses = await expenseService.getAllExpenses(userId);
@@ -50,20 +48,17 @@ async function updateExpense(req: Request, res: Response) {
     const id = req.params.id;
 
     if (!userId) {
-      res.status(401).json({ message: 'Não autenticado' });
-      return;
+      return res.status(401).json({ message: 'Não autenticado' });
     }
 
     if (!id || Array.isArray(id)) {
-      res.status(400).json({ message: 'ID inválido' });
-      return;
+      return res.status(400).json({ message: 'ID inválido' });
     }
 
     const updatedExpense = await expenseService.updateExpense(id, userId, validatedData);
 
     if (!updatedExpense) {
-      res.status(404).json({ message: 'Gasto não encontrado' });
-      return;
+      return res.status(404).json({ message: 'Gasto não encontrado' });
     }
 
     res.status(200).json(updatedExpense);
@@ -82,20 +77,17 @@ async function deleteExpense(req: Request, res: Response) {
     const id = req.params.id;
 
     if (!userId) {
-      res.status(401).json({ message: 'Não autenticado' });
-      return;
+      return res.status(401).json({ message: 'Não autenticado' });
     }
 
     if (!id || Array.isArray(id)) {
-      res.status(400).json({ message: 'ID inválido' });
-      return;
+      return res.status(400).json({ message: 'ID inválido' });
     }
 
     const deletedExpense = await expenseService.deleteExpense(id, userId);
 
     if (!deletedExpense) {
-      res.status(404).json({ message: 'Gasto não encontrado' });
-      return;
+      return res.status(404).json({ message: 'Gasto não encontrado' });
     }
 
     res.status(200).json({ message: 'Gasto deletado com sucesso' });

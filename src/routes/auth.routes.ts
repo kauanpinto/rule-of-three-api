@@ -1,11 +1,11 @@
 import { Router } from 'express';
+import { requireAuth } from '@/middlewares/auth.middleware.js';
 import { authController } from '@/controllers/auth.controller.js';
 import {
   authLimiter,
   accountActionLimiter,
   publicSensitiveLimiter,
 } from '@/middlewares/rateLimit.middleware.js';
-import { requireAuth } from '@/middlewares/auth.middleware.js';
 
 const authRoutes = Router();
 

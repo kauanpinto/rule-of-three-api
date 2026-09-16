@@ -7,7 +7,10 @@ import type { Request, Response } from 'express';
 async function deleteAccount(req: Request, res: Response) {
   try {
     const userId = req.userId;
-    if (!userId) return res.status(401).json({ message: 'Não autenticado' });
+
+    if (!userId) {
+      return res.status(401).json({ message: 'Não autenticado' });
+    }
 
     const validatedData = userSchema.deleteAccountSchema.parse(req.body);
     await userService.deleteAccount(userId, validatedData);

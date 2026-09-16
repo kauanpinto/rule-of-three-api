@@ -34,7 +34,9 @@ async function findUserByResetTokenHash(hashedToken: string) {
 async function createUser(data: CreateUserInput) {
   const [newUser] = await db.insert(users).values(data).returning();
 
-  if (!newUser) throw new Error('Não foi possível criar o usuário');
+  if (!newUser) {
+    throw new Error('Não foi possível criar o usuário');
+  }
 
   return newUser;
 }

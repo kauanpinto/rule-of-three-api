@@ -6,8 +6,7 @@ async function getSummary(req: Request, res: Response) {
     const userId = req.userId;
 
     if (!userId) {
-      res.status(401).json({ message: 'Não autenticado' });
-      return;
+      return res.status(401).json({ message: 'Não autenticado' });
     }
 
     const summary = await dashboardService.getSummary(userId);

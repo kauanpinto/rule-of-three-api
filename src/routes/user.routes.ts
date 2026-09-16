@@ -1,7 +1,7 @@
 import { Router } from 'express';
+import { requireAuth } from '@/middlewares/auth.middleware.js';
 import { userController } from '@/controllers/user.controller.js';
 import { accountActionLimiter } from '@/middlewares/rateLimit.middleware.js';
-import { requireAuth } from '@/middlewares/auth.middleware.js';
 
 const userRoutes = Router();
 

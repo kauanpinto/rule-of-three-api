@@ -11,7 +11,9 @@ async function getSummary(userId: string) {
   const user = await userRepository.findUserById(userId);
   const userExpenses = await expenseRepository.getAllExpensesByUserId(userId);
 
-  if (!user) throw new Error('Usuário não encontrado');
+  if (!user) {
+    throw new Error('Usuário não encontrado');
+  }
 
   const income = Number(user.income);
 

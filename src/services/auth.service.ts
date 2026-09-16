@@ -1,8 +1,14 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'node:crypto';
-import { sendWelcomeEmail, sendPasswordResetEmail } from '@/lib/email.js';
 import { userRepository } from '@/repositories/user.repository.js';
+import { sendWelcomeEmail, sendPasswordResetEmail } from '@/lib/email.js';
+import {
+  NotFoundError,
+  UnauthorizedError,
+  BadRequestError,
+  ConflictError,
+} from '@/errors/AppError.js';
 import type {
   RegisterInput,
   LoginInput,
@@ -10,14 +16,8 @@ import type {
   ForgotPasswordInput,
   ResetPasswordInput,
 } from '@/schemas/auth.schema.js';
-import {
-  NotFoundError,
-  UnauthorizedError,
-  BadRequestError,
-  ConflictError,
-} from '@/errors/AppError.js';
 
-async function registerUser(input: RegisterInput) {
+async function register(input: RegisterInput) {
   const existingUser = await userRepository.findUserByEmail(input.email);
 
   if (existingUser) {
@@ -45,7 +45,7 @@ async function registerUser(input: RegisterInput) {
   return safeUser;
 }
 
-async function loginUser(input: LoginInput) {
+async function login(input: LoginInput) {
   const existingUser = await userRepository.findUserByEmail(input.email);
 
   if (!existingUser) {
@@ -106,7 +106,6 @@ async function forgotPassword(input: ForgotPasswordInput) {
 
 async function resetPassword(token: string, input: ResetPasswordInput) {
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
-
   const existingUser = await userRepository.findUserByResetTokenHash(hashedToken);
 
   if (!existingUser) {
@@ -130,8 +129,8 @@ async function resetPassword(token: string, input: ResetPasswordInput) {
 }
 
 export const authService = {
-  registerUser,
-  loginUser,
+  register,
+  login,
   changePassword,
   forgotPassword,
   resetPassword,

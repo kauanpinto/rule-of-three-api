@@ -1,13 +1,13 @@
 import { ZodError } from 'zod';
 import { AppError } from '@/errors/AppError.js';
-import { authService } from '@/services/auth.service.js';
 import { authSchema } from '@/schemas/auth.schema.js';
+import { authService } from '@/services/auth.service.js';
 import type { Request, Response } from 'express';
 
 async function register(req: Request, res: Response) {
   try {
     const validatedData = authSchema.registerSchema.parse(req.body);
-    const newUser = await authService.registerUser(validatedData);
+    const newUser = await authService.register(validatedData);
 
     res.status(201).json(newUser);
   } catch (error) {
@@ -24,7 +24,7 @@ async function register(req: Request, res: Response) {
 async function login(req: Request, res: Response) {
   try {
     const validatedData = authSchema.loginSchema.parse(req.body);
-    const token = await authService.loginUser(validatedData);
+    const token = await authService.login(validatedData);
 
     res.cookie('token', token, {
       httpOnly: true,
@@ -58,7 +58,10 @@ async function logout(_req: Request, res: Response) {
 async function changePassword(req: Request, res: Response) {
   try {
     const userId = req.userId;
-    if (!userId) return res.status(401).json({ message: 'Não autenticado' });
+
+    if (!userId) {
+      return res.status(401).json({ message: 'Não autenticado' });
+    }
 
     const validatedData = authSchema.changePasswordSchema.parse(req.body);
     await authService.changePassword(userId, validatedData);
@@ -94,8 +97,9 @@ async function resetPassword(req: Request, res: Response) {
   try {
     const token = req.query.token;
 
-    if (typeof token !== 'string') return res.status(400).json({ message: 'Token inválido' });
-    if (!token) return res.status(404).json({ message: 'Token inválido' });
+    if (typeof token !== 'string' || !token) {
+      return res.status(400).json({ message: 'Token inválido' });
+    }
 
     const validatedData = authSchema.resetPasswordSchema.parse(req.body);
     await authService.resetPassword(token, validatedData);
