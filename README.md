@@ -25,8 +25,8 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 
 ## Requisitos
 
-- Node.js 22.x
-- npm
+- [Node.js](https://nodejs.org/) 22.x
+- [npm](https://www.npmjs.com/)
 - Conta na [Neon](https://neon.tech/)
 - Uma segunda branch no Neon, dedicada a testes (opcional, só necessário se for rodar a suíte de testes)
 - Conta na [Resend](https://resend.com/)
@@ -125,6 +125,7 @@ npm run test
 
 | Método | Rota | Descrição |
 |---|---|---|
+| PATCH | `/users/me` | Atualiza nome e/ou renda do usuário autenticado |
 | DELETE | `/users/me` | Exclui a conta do usuário autenticado (exige senha) |
 
 ### Gastos

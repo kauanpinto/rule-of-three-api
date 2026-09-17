@@ -9,6 +9,11 @@ type CreateUserInput = {
   income: string;
 };
 
+export type UpdateProfileData = {
+  name?: string;
+  income?: string;
+};
+
 async function findUserByEmail(email: string) {
   const [existingUser] = await db.select().from(users).where(eq(users.email, email)).limit(1);
 
@@ -39,6 +44,12 @@ async function createUser(data: CreateUserInput) {
   }
 
   return newUser;
+}
+
+async function updateProfile(userId: string, data: UpdateProfileData) {
+  const [updatedUser] = await db.update(users).set(data).where(eq(users.id, userId)).returning();
+
+  return updatedUser;
 }
 
 async function deleteUser(userId: string) {
@@ -88,6 +99,7 @@ export const userRepository = {
   findUserById,
   findUserByResetTokenHash,
   createUser,
+  updateProfile,
   deleteUser,
   updatePassword,
   saveResetToken,

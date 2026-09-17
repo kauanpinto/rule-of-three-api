@@ -4,6 +4,30 @@ import { userService } from '@/services/user.service.js';
 import { userSchema } from '@/schemas/user.schema.js';
 import type { Request, Response } from 'express';
 
+async function updateProfile(req: Request, res: Response) {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: 'Não autenticado' });
+    }
+
+    const validatedData = userSchema.updateProfileSchema.parse(req.body);
+    const updatedUser = await userService.updateProfile(userId, validatedData);
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    if (error instanceof ZodError) {
+      res.status(400).json({ message: 'Erro de validação', issues: error.issues });
+    } else if (error instanceof AppError) {
+      res.status(error.status).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Erro interno no servidor' });
+    }
+  }
+}
+
 async function deleteAccount(req: Request, res: Response) {
   try {
     const userId = req.userId;
@@ -28,5 +52,6 @@ async function deleteAccount(req: Request, res: Response) {
 }
 
 export const userController = {
+  updateProfile,
   deleteAccount,
 };
