@@ -6,6 +6,72 @@ import { users } from '@/db/schema.js';
 import * as emailLib from '@/lib/email.js';
 import { createTestSession } from './helpers.js';
 
+describe('PATCH /users/me', () => {
+  beforeEach(async () => {
+    await db.delete(users);
+  });
+
+  it('deve atualizar apenas o nome', async () => {
+    const cookie = await createTestSession();
+
+    const response = await request(app)
+      .patch('/users/me')
+      .set('Cookie', cookie)
+      .send({ name: 'Nome Atualizado' });
+
+    expect(response.status).toBe(200);
+    expect(response.body.name).toBe('Nome Atualizado');
+  });
+
+  it('deve atualizar apenas a renda', async () => {
+    const cookie = await createTestSession('test2@test.com');
+
+    const response = await request(app)
+      .patch('/users/me')
+      .set('Cookie', cookie)
+      .send({ income: 5000 });
+
+    expect(response.status).toBe(200);
+    expect(response.body.income).toBe('5000.00');
+  });
+
+  it('deve retornar 400 se nenhum campo for enviado', async () => {
+    const cookie = await createTestSession('test3@test.com');
+
+    const response = await request(app).patch('/users/me').set('Cookie', cookie).send({});
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 400 se o nome for muito curto', async () => {
+    const cookie = await createTestSession('test4@test.com');
+
+    const response = await request(app)
+      .patch('/users/me')
+      .set('Cookie', cookie)
+      .send({ name: 'T' });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 400 se a renda não for positiva', async () => {
+    const cookie = await createTestSession('test5@test.com');
+
+    const response = await request(app)
+      .patch('/users/me')
+      .set('Cookie', cookie)
+      .send({ income: -100 });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 401 se o usuário não estiver autenticado', async () => {
+    const response = await request(app).patch('/users/me').send({ name: 'Sem Login' });
+
+    expect(response.status).toBe(401);
+  });
+});
+
 describe('DELETE /users/me', () => {
   beforeEach(async () => {
     await db.delete(users);

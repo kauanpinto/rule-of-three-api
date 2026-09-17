@@ -17,7 +17,6 @@ async function updateProfile(req: Request, res: Response) {
 
     res.status(200).json(updatedUser);
   } catch (error) {
-    console.error(error);
     if (error instanceof ZodError) {
       res.status(400).json({ message: 'Erro de validação', issues: error.issues });
     } else if (error instanceof AppError) {
