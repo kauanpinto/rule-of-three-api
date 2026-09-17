@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '@/db/client.js';
 import { users } from '@/db/schema.js';
 import * as emailLib from '@/lib/email.js';
-import { registerAndLogin } from './helpers.js';
+import { createTestSession } from './helpers.js';
 
 describe('POST /auth/register', () => {
   beforeEach(async () => {
@@ -234,7 +234,7 @@ describe('PATCH /auth/change-password', () => {
   });
 
   it('deve trocar a senha com dados válidos', async () => {
-    const cookie = await registerAndLogin();
+    const cookie = await createTestSession();
 
     const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
       currentPassword: 'teste123',
@@ -245,7 +245,7 @@ describe('PATCH /auth/change-password', () => {
   });
 
   it('deve retornar 401 se a senha atual estiver errada', async () => {
-    const cookie = await registerAndLogin('test2@test.com');
+    const cookie = await createTestSession('test2@test.com');
 
     const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
       currentPassword: 'senhaErrada',
@@ -256,7 +256,7 @@ describe('PATCH /auth/change-password', () => {
   });
 
   it('deve retornar 400 se a nova senha for igual à atual', async () => {
-    const cookie = await registerAndLogin('test3@test.com');
+    const cookie = await createTestSession('test3@test.com');
 
     const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
       currentPassword: 'teste123',
@@ -267,7 +267,7 @@ describe('PATCH /auth/change-password', () => {
   });
 
   it('deve retornar 400 se a nova senha for muito curta', async () => {
-    const cookie = await registerAndLogin('test4@test.com');
+    const cookie = await createTestSession('test4@test.com');
 
     const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
       currentPassword: 'teste123',

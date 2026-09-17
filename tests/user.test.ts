@@ -4,7 +4,7 @@ import app from '@/app.js';
 import { db } from '@/db/client.js';
 import { users } from '@/db/schema.js';
 import * as emailLib from '@/lib/email.js';
-import { registerAndLogin } from './helpers.js';
+import { createTestSession } from './helpers.js';
 
 describe('DELETE /users/me', () => {
   beforeEach(async () => {
@@ -17,7 +17,7 @@ describe('DELETE /users/me', () => {
   });
 
   it('deve excluir o usuário existente com sucesso', async () => {
-    const cookie = await registerAndLogin();
+    const cookie = await createTestSession();
 
     const response = await request(app).delete('/users/me').set('Cookie', cookie).send({
       password: 'teste123',
@@ -28,7 +28,7 @@ describe('DELETE /users/me', () => {
   });
 
   it('deve retornar 401 se a senha estiver errada', async () => {
-    const cookie = await registerAndLogin('test2@test.com');
+    const cookie = await createTestSession('test2@test.com');
 
     const response = await request(app).delete('/users/me').set('Cookie', cookie).send({
       password: 'senhaErrada',
@@ -46,7 +46,7 @@ describe('DELETE /users/me', () => {
   });
 
   it('deve impedir login após a exclusão da conta', async () => {
-    const cookie = await registerAndLogin('test3@test.com');
+    const cookie = await createTestSession('test3@test.com');
 
     await request(app).delete('/users/me').set('Cookie', cookie).send({
       password: 'teste123',

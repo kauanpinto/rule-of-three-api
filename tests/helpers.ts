@@ -1,34 +1,18 @@
-import request from 'supertest';
-import { vi } from 'vitest';
-import app from '@/app.js';
-import * as emailLib from '@/lib/email.js';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import { userRepository } from '@/repositories/user.repository.js';
 
-export async function registerAndLogin(email = 'test@test.com'): Promise<string> {
-  vi.spyOn(emailLib, 'sendWelcomeEmail').mockResolvedValue(undefined);
+export async function createTestSession(email = 'test@test.com') {
+  const hashedPassword = await bcrypt.hash('teste123', 4);
 
-  await request(app).post('/auth/register').send({
+  const user = await userRepository.createUser({
     name: 'Teste',
     email,
-    password: 'teste123',
-    income: 3000,
+    password: hashedPassword,
+    income: '3000',
   });
 
-  const response = await request(app).post('/auth/login').send({
-    email,
-    password: 'teste123',
-  });
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: '7d' });
 
-  const cookie = response.headers['set-cookie']?.[0];
-
-  if (!cookie) {
-    throw new Error('Login falhou ao gerar cookie de sessão nos testes');
-  }
-
-  const sessionCookie = cookie.split(';')[0];
-
-  if (!sessionCookie) {
-    throw new Error('Cookie de sessão inválido nos testes');
-  }
-
-  return sessionCookie;
+  return `token=${token}`;
 }

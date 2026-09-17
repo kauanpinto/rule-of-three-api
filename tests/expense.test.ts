@@ -3,7 +3,7 @@ import request from 'supertest';
 import app from '@/app.js';
 import { db } from '@/db/client.js';
 import { users, expenses } from '@/db/schema.js';
-import { registerAndLogin } from './helpers.js';
+import { createTestSession } from './helpers.js';
 
 describe('POST /expenses', () => {
   beforeEach(async () => {
@@ -16,7 +16,7 @@ describe('POST /expenses', () => {
   });
 
   it('deve criar um gasto com dados válidos', async () => {
-    const cookie = await registerAndLogin();
+    const cookie = await createTestSession();
 
     const response = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Teste',
@@ -34,7 +34,7 @@ describe('POST /expenses', () => {
   });
 
   it('deve criar um gasto com dados válidos com a descrição opcional', async () => {
-    const cookie = await registerAndLogin('test2@test.com');
+    const cookie = await createTestSession('test2@test.com');
 
     const response = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Teste2',
@@ -46,7 +46,7 @@ describe('POST /expenses', () => {
   });
 
   it('deve retornar 400 se o título for muito curto', async () => {
-    const cookie = await registerAndLogin('test3@test.com');
+    const cookie = await createTestSession('test3@test.com');
 
     const response = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: '',
@@ -59,7 +59,7 @@ describe('POST /expenses', () => {
   });
 
   it('deve retornar 400 se o gasto for negativo', async () => {
-    const cookie = await registerAndLogin('test4@test.com');
+    const cookie = await createTestSession('test4@test.com');
 
     const response = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Teste4',
@@ -72,7 +72,7 @@ describe('POST /expenses', () => {
   });
 
   it('deve retornar 400 se a categoria não existir', async () => {
-    const cookie = await registerAndLogin('test5@test.com');
+    const cookie = await createTestSession('test5@test.com');
 
     const response = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Teste5',
@@ -107,7 +107,7 @@ describe('GET /expenses', () => {
   });
 
   it('deve listar os gastos do usuário autenticado', async () => {
-    const cookie = await registerAndLogin();
+    const cookie = await createTestSession();
 
     await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto 1',
@@ -128,7 +128,7 @@ describe('GET /expenses', () => {
   });
 
   it('deve listar um array vazio do usuário autenticado', async () => {
-    const cookie = await registerAndLogin('test2@test.com');
+    const cookie = await createTestSession('test2@test.com');
     const response = await request(app).get('/expenses').set('Cookie', cookie);
 
     expect(response.status).toBe(200);
@@ -136,8 +136,8 @@ describe('GET /expenses', () => {
   });
 
   it('deve listar os gastos do usuário autenticado, não de outros', async () => {
-    const cookie = await registerAndLogin('test3a@test.com');
-    const cookie2 = await registerAndLogin('test3b@test.com');
+    const cookie = await createTestSession('test3a@test.com');
+    const cookie2 = await createTestSession('test3b@test.com');
 
     await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto A1',
@@ -187,7 +187,7 @@ describe('PATCH /expenses/:id', () => {
   });
 
   it('deve atualizar o gasto do usuário autenticado', async () => {
-    const cookie = await registerAndLogin();
+    const cookie = await createTestSession();
 
     const spent = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto',
@@ -212,7 +212,7 @@ describe('PATCH /expenses/:id', () => {
   });
 
   it('deve atualizar o gasto parcialmente do usuário autenticado', async () => {
-    const cookie = await registerAndLogin('test2@test.com');
+    const cookie = await createTestSession('test2@test.com');
 
     const spent = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto',
@@ -235,7 +235,7 @@ describe('PATCH /expenses/:id', () => {
   });
 
   it('deve retornar 404 se o id for inexistente', async () => {
-    const cookie = await registerAndLogin('test3@test.com');
+    const cookie = await createTestSession('test3@test.com');
 
     const idInexistente = '00000000-0000-0000-0000-000000000000';
 
@@ -250,8 +250,8 @@ describe('PATCH /expenses/:id', () => {
   });
 
   it('deve retornar 404 se tentar atualizar o gasto de outro usuário', async () => {
-    const cookieA = await registerAndLogin('test4@test.com');
-    const cookieB = await registerAndLogin('test4b@test.com');
+    const cookieA = await createTestSession('test4@test.com');
+    const cookieB = await createTestSession('test4b@test.com');
 
     const spentA = await request(app).post('/expenses').set('Cookie', cookieA).send({
       title: 'Gasto',
@@ -269,7 +269,7 @@ describe('PATCH /expenses/:id', () => {
   });
 
   it('deve retornar 401 se o usuário não estiver autenticado', async () => {
-    const cookie = await registerAndLogin('test5@test.com');
+    const cookie = await createTestSession('test5@test.com');
 
     const spent = await request(app).post('/expenses').send({
       title: 'Gasto',
@@ -289,7 +289,7 @@ describe('PATCH /expenses/:id', () => {
   });
 
   it('deve retornar 400 se o título for muito curto', async () => {
-    const cookie = await registerAndLogin('test6@test.com');
+    const cookie = await createTestSession('test6@test.com');
 
     const spent = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto',
@@ -307,7 +307,7 @@ describe('PATCH /expenses/:id', () => {
   });
 
   it('deve retornar 400 se a categoria não existir', async () => {
-    const cookie = await registerAndLogin('test7@test.com');
+    const cookie = await createTestSession('test7@test.com');
 
     const spent = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto',
@@ -325,7 +325,7 @@ describe('PATCH /expenses/:id', () => {
   });
 
   it('deve retornar 400 se o gasto for negativo', async () => {
-    const cookie = await registerAndLogin('test6@test.com');
+    const cookie = await createTestSession('test6@test.com');
 
     const spent = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto',
@@ -354,7 +354,7 @@ describe('DELETE /expenses/:id', () => {
   });
 
   it('deve deletar o gasto do usuário autenticado', async () => {
-    const cookie = await registerAndLogin();
+    const cookie = await createTestSession();
 
     const spent = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto',
@@ -374,8 +374,8 @@ describe('DELETE /expenses/:id', () => {
   });
 
   it('deve retornar 404 se tentar deletar o gasto de outro usuário', async () => {
-    const cookieA = await registerAndLogin('test2@test.com');
-    const cookieB = await registerAndLogin('test2b@test.com');
+    const cookieA = await createTestSession('test2@test.com');
+    const cookieB = await createTestSession('test2b@test.com');
 
     const spentA = await request(app).post('/expenses').set('Cookie', cookieA).send({
       title: 'Gasto',
@@ -391,7 +391,7 @@ describe('DELETE /expenses/:id', () => {
   });
 
   it('deve retornar 404 se o id for inexistente', async () => {
-    const cookie = await registerAndLogin('test3@test.com');
+    const cookie = await createTestSession('test3@test.com');
 
     const idInexistente = '00000000-0000-0000-0000-000000000000';
 
@@ -401,7 +401,7 @@ describe('DELETE /expenses/:id', () => {
   });
 
   it('deve retornar 401 se o usuário não estiver autenticado', async () => {
-    const cookie = await registerAndLogin('test4@test.com');
+    const cookie = await createTestSession('test4@test.com');
 
     const spent = await request(app).post('/expenses').set('Cookie', cookie).send({
       title: 'Gasto',

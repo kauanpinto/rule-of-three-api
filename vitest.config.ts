@@ -11,5 +11,6 @@ export default defineConfig({
     environment: 'node',
     globals: false,
     fileParallelism: false,
+    isolate: false,
   },
 });
