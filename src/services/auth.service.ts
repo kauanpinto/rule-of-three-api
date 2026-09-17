@@ -1,7 +1,7 @@
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'node:crypto';
 import { userRepository } from '@/repositories/user.repository.js';
+import { hashPassword, comparePassword } from '@/config/password.js';
 import { sendWelcomeEmail, sendPasswordResetEmail } from '@/lib/email.js';
 import {
   NotFoundError,
@@ -24,7 +24,7 @@ async function register(input: RegisterInput) {
     throw new ConflictError('Email já está em uso');
   }
 
-  const passwordHashed = await bcrypt.hash(input.password, 10);
+  const passwordHashed = await hashPassword(input.password);
   const income = String(input.income);
 
   const newUser = await userRepository.createUser({
@@ -52,7 +52,7 @@ async function login(input: LoginInput) {
     throw new UnauthorizedError('Credenciais inválidas');
   }
 
-  const isPasswordValid = await bcrypt.compare(input.password, existingUser.password);
+  const isPasswordValid = await comparePassword(input.password, existingUser.password);
 
   if (!isPasswordValid) {
     throw new UnauthorizedError('Credenciais inválidas');
@@ -74,13 +74,13 @@ async function changePassword(userId: string, input: ChangePasswordInput) {
     throw new NotFoundError('usuário não encontrado');
   }
 
-  const isPasswordValid = await bcrypt.compare(input.currentPassword, existingUser.password);
+  const isPasswordValid = await comparePassword(input.currentPassword, existingUser.password);
 
   if (!isPasswordValid) {
     throw new UnauthorizedError('Senha atual incorreta');
   }
 
-  const hashedPassword = await bcrypt.hash(input.newPassword, 10);
+  const hashedPassword = await hashPassword(input.newPassword);
 
   await userRepository.updatePassword(userId, hashedPassword);
 }
@@ -116,13 +116,13 @@ async function resetPassword(token: string, input: ResetPasswordInput) {
     throw new BadRequestError('Token expirado');
   }
 
-  const isSamePassword = await bcrypt.compare(input.password, existingUser.password);
+  const isSamePassword = await comparePassword(input.password, existingUser.password);
 
   if (isSamePassword) {
     throw new BadRequestError('A nova senha não pode ser igual à atual');
   }
 
-  const hashedPassword = await bcrypt.hash(input.password, 10);
+  const hashedPassword = await hashPassword(input.password);
 
   await userRepository.updatePassword(existingUser.id, hashedPassword);
   await userRepository.clearResetToken(existingUser.id);

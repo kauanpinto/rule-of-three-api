@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import { comparePassword } from '@/config/password.js';
 import { userRepository } from '@/repositories/user.repository.js';
 import { UnauthorizedError, NotFoundError, BadRequestError } from '@/errors/AppError.js';
 import type { UpdateProfileData } from '@/repositories/user.repository.js';
@@ -43,7 +43,7 @@ async function deleteAccount(userId: string, input: DeleteAccountInput) {
     throw new NotFoundError('Usuário não encontrado');
   }
 
-  const isPasswordValid = await bcrypt.compare(input.password, existingUser.password);
+  const isPasswordValid = await comparePassword(input.password, existingUser.password);
 
   if (!isPasswordValid) {
     throw new UnauthorizedError('Senha atual incorreta');
