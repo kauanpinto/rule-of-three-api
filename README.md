@@ -1,6 +1,6 @@
 # Rule of Three - API
 
-**⚠ PROJETO EM DESENVOLVIMENTO!**
+> Backend completo e testado. Deploy em andamento.
 
 API REST para planejamento financeiro baseada na regra 50/30/20.
 
@@ -12,6 +12,18 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 - 30% — Lazer: gastos pessoais e de entretenimento.
 - 20% — Investimentos: reserva financeira e investimentos.
 
+## Índice
+- [Tecnologias](#tecnologias)
+- [Segurança](#segurança)
+- [Requisitos](#requisitos)
+- [Como executar](#como-executar)
+- [Variáveis de ambiente](#variáveis-de-ambiente)
+- [Scripts](#scripts)
+- [Testes](#testes)
+- [Endpoints](#endpoints)
+- [Estrutura do projeto](#estrutura-do-projeto)
+- [Autor](#autor)
+
 ## Tecnologias
 
 - [Node.js](https://nodejs.org/) 22.x
@@ -22,6 +34,17 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 - [Vitest](https://vitest.dev/) ^5.0.0
 - [Supertest](https://github.com/ladjs/supertest) ^7.2.2
 - [Resend](https://resend.com/) ^6.26.0
+
+## Segurança
+
+- Senhas com hash via bcrypt (custo configurável, reduzido automaticamente em ambiente de teste)
+- Autenticação via JWT em cookie httpOnly (proteção contra XSS)
+- Rate limiting dedicado por tipo de rota (autenticação, ações de conta, rotas públicas sensíveis)
+- Tokens de redefinição de senha com hash SHA-256, expiração de 1 hora e uso único
+- Prevenção de enumeração de contas: `/auth/forgot-password` sempre responde de forma genérica, independente do email existir
+- CORS restrito à origem do frontend
+- Headers de segurança via Helmet
+- Classes de erro customizadas para respostas HTTP consistentes e previsíveis
 
 ## Requisitos
 
@@ -67,6 +90,16 @@ npm run dev
 ```
 
 A API estará disponível em: `http://localhost:3000`
+
+## Variáveis de ambiente
+
+| Variável | Descrição |
+|---|---|
+| `DATABASE_URL` | Connection string do banco PostgreSQL (Neon) |
+| `JWT_SECRET` | Chave usada para assinar os tokens JWT |
+| `RESEND_API_KEY` | Chave da API do Resend, para envio de emails |
+| `FRONTEND_URL` | URL do frontend, usada no CORS e nos links de redefinição de senha |
+| `PORT` | Porta em que o servidor roda (padrão: 3000) |
 
 ## Scripts
 
@@ -142,6 +175,25 @@ npm run test
 | Método | Rota | Descrição |
 |---|---|---|
 | GET | `/dashboard/summary` | Retorna o resumo 50/30/20 do usuário autenticado |
+
+## Estrutura do projeto
+
+```text
+src/
+├── app.ts          # Configuração do Express (middlewares e rotas)
+├── server.ts       # Ponto de entrada, inicia o servidor
+├── config/         # Configurações do projeto
+├── controllers/    # Lida com request/response HTTP
+├── db/             # Configuração do banco e schema
+├── errors/         # Classes de erro customizadas
+├── lib/            # Integrações externas (email)
+├── middlewares/    # Autenticação e rate limiting
+├── repositories/   # Acesso ao banco de dados
+├── routes/         # Definição das rotas da API
+├── schemas/        # Validação de dados com Zod
+├── services/       # Regras de negócio
+└── types/          # Definições de tipos globais (ex: Express Request)
+```
 
 ## Autor
 
