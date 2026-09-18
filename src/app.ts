@@ -27,4 +27,8 @@ app.get('/health', (_req: Request, res: Response): void => {
   res.json({ status: 'ok' });
 });
 
+app.get('/debug-ip', (req, res) => {
+  res.json({ ip: req.ip });
+});
+
 export default app;
