@@ -21,6 +21,8 @@ app.use('/users', userRoutes);
 app.use('/expenses', expenseRoutes);
 app.use('/dashboard', dashboardRoutes);
 
+app.set('trust proxy', true);
+
 app.get('/health', (_req: Request, res: Response): void => {
   res.json({ status: 'ok' });
 });
