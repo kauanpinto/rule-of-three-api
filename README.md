@@ -1,7 +1,5 @@
 # Rule of Three - API
 
-> Backend completo e testado. Deploy em andamento.
-
 API REST para planejamento financeiro baseada na regra 50/30/20.
 
 ## Descrição
@@ -13,16 +11,18 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 - 20% — Investimentos: reserva financeira e investimentos.
 
 ## Índice
-- [Tecnologias](#tecnologias)
-- [Segurança](#segurança)
-- [Requisitos](#requisitos)
-- [Como executar](#como-executar)
-- [Variáveis de ambiente](#variáveis-de-ambiente)
-- [Scripts](#scripts)
-- [Testes](#testes)
-- [Endpoints](#endpoints)
-- [Estrutura do projeto](#estrutura-do-projeto)
-- [Autor](#autor)
+
+1. [Tecnologias](#tecnologias)
+2. [Segurança](#seguranca)
+3. [Deploy](#deploy)
+4. [Requisitos](#requisitos)
+5. [Como executar](#como-executar)
+6. [Variáveis de ambiente](#variaveis-de-ambiente)
+7. [Scripts](#scripts)
+8. [Testes](#testes)
+9. [Endpoints](#endpoints)
+10. [Estrutura do projeto](#estrutura-do-projeto)
+11. [Autor](#autor)
 
 ## Tecnologias
 
@@ -35,24 +35,34 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 - [Supertest](https://github.com/ladjs/supertest) ^7.2.2
 - [Resend](https://resend.com/) ^6.26.0
 
+<a id="seguranca"></a>
+
 ## Segurança
 
-- Senhas com hash via bcrypt (custo configurável, reduzido automaticamente em ambiente de teste)
-- Autenticação via JWT em cookie httpOnly (proteção contra XSS)
-- Rate limiting dedicado por tipo de rota (autenticação, ações de conta, rotas públicas sensíveis)
-- Tokens de redefinição de senha com hash SHA-256, expiração de 1 hora e uso único
-- Prevenção de enumeração de contas: `/auth/forgot-password` sempre responde de forma genérica, independente do email existir
-- CORS restrito à origem do frontend
-- Headers de segurança via Helmet
-- Classes de erro customizadas para respostas HTTP consistentes e previsíveis
+- Senhas com hash via [bcrypt](https://www.npmjs.com/package/bcryptjs)
+- Autenticação via [JWT](https://www.jwt.io/) em cookie httpOnly
+- [Rate limiting](https://express-rate-limit.mintlify.app/) dedicado por tipo de rota (autenticação, ações de conta, rotas públicas sensíveis)
+- Tokens de redefinição de senha com hash [SHA-256](https://en.wikipedia.org/wiki/SHA-2), expiração de 1 hora e uso único
+- Prevenção de enumeração de contas no fluxo de recuperação de senha
+- [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS) restrito à origem do frontend
+- Headers de segurança via [Helmet](https://helmet.js.org/)
+- Classes de erro customizadas para respostas HTTP consistentes
+
+## Deploy
+
+A API está hospedada na [Render](https://render.com/) e utiliza [Neon](https://neon.tech/) como banco de dados.
+
+**URL do projeto**: https://ruleof3-api.onrender.com
+
+> `trust proxy` habilitado, já que a [Render](https://render.com/) opera atrás de um proxy reverso — necessário para o rate limiting identificar corretamente o IP de cada cliente.
 
 ## Requisitos
 
 - [Node.js](https://nodejs.org/) 22.x
-- [npm](https://www.npmjs.com/)
 - Conta na [Neon](https://neon.tech/)
-- Uma segunda branch no Neon, dedicada a testes (opcional, só necessário se for rodar a suíte de testes)
 - Conta na [Resend](https://resend.com/)
+
+> Para executar os testes, é necessário também um banco separado na [Neon](https://neon.tech/).
 
 ## Como executar
 
@@ -70,8 +80,6 @@ npm install
 ```
 
 3. Configurar as variáveis de ambiente:
-
-Copie o arquivo de exemplo e preencha com seus valores:
 
 ```bash
 cp .env.example .env
@@ -91,51 +99,49 @@ npm run dev
 
 A API estará disponível em: `http://localhost:3000`
 
+<a id="variaveis-de-ambiente"></a>
+
 ## Variáveis de ambiente
 
 | Variável | Descrição |
 |---|---|
-| `DATABASE_URL` | Connection string do banco PostgreSQL (Neon) |
-| `JWT_SECRET` | Chave usada para assinar os tokens JWT |
-| `RESEND_API_KEY` | Chave da API do Resend, para envio de emails |
+| `DATABASE_URL` | Connection string do PostgreSQL |
+| `JWT_SECRET` | Chave usada para assinar os JWTs |
+| `RESEND_API_KEY` | Chave da API do Resend |
 | `FRONTEND_URL` | URL do frontend, usada no CORS e nos links de redefinição de senha |
-| `PORT` | Porta em que o servidor roda (padrão: 3000) |
+| `PORT` | Porta do servidor (padrão: 3000) |
 
 ## Scripts
 
 | Comando | Descrição |
 |---|---|
-| `npm run dev` | Sobe o servidor em modo desenvolvimento, com reload automático |
-| `npm run build` | Compila o TypeScript para JavaScript (pasta `dist/`) |
-| `npm start` | Executa a versão compilada (produção, requer `npm run build` antes) |
-| `npm run typecheck` | Verifica erros de tipo sem gerar arquivos |
-| `npm run test` | Roda a suíte de testes automatizados |
-| `npm run format` | Formata todo o código com Prettier |
-| `npm run format:check` | Verifica se o código está formatado, sem alterar arquivos |
+| `npm run dev` | Inicia o servidor em desenvolvimento |
+| `npm run build` | Compila o TypeScript |
+| `npm start` | Executa a versão compilada |
+| `npm run typecheck` | Verifica os tipos |
+| `npm run test` | Executa os testes |
+| `npm run format` | Formata o código |
+| `npm run format:check` | Verifica se o código está formatado |
 
 ## Testes
 
-O projeto usa [Vitest](https://vitest.dev/) + [Supertest](https://github.com/ladjs/supertest) para testes de integração dos endpoints.
+O projeto usa [Vitest](https://vitest.dev/) e [Supertest](https://github.com/ladjs/supertest) para os testes.
 
 ### Configuração
 
-Os testes rodam contra um banco separado do de desenvolvimento, para evitar apagar ou corromper dados reais.
-
-1. No dashboard do Neon, crie uma branch dedicada a testes (ex: `test`)
-
-2. Copie o arquivo de exemplo e preencha com a string da branch de teste:
+1. Crie uma branch dedicada aos testes no Neon e configure:
 
 ```bash
 cp .env.example .env.test
 ```
 
-3. Aplique as migrations nela:
+2. Aplique as migrations:
 
 ```bash
 NODE_ENV=test npx drizzle-kit migrate
 ```
 
-4. Executando:
+3. Execute os testes:
 
 ```bash
 npm run test
@@ -147,52 +153,52 @@ npm run test
 
 | Método | Rota | Descrição |
 |---|---|---|
-| POST | `/auth/register` | Cadastra um novo usuário |
-| POST | `/auth/login` | Autentica o usuário e retorna um cookie de sessão |
-| POST | `/auth/logout` | Encerra a sessão do usuário, removendo o cookie |
-| PATCH | `/auth/change-password` | Altera a senha do usuário autenticado (exige senha atual) |
-| POST | `/auth/forgot-password` | Envia o link de redefinição de senha |
-| POST | `/auth/reset-password` | Altera a senha do usuário existente não autenticado |
+| POST | `/auth/register` | Cadastra um usuário |
+| POST | `/auth/login` | Autentica o usuário |
+| POST | `/auth/logout` | Encerra a sessão |
+| PATCH | `/auth/change-password` | Altera a senha |
+| POST | `/auth/forgot-password` | Solicita redefinição de senha |
+| POST | `/auth/reset-password` | Redefine a senha |
 
 ### Usuário
 
 | Método | Rota | Descrição |
 |---|---|---|
-| PATCH | `/users/me` | Atualiza nome e/ou renda do usuário autenticado |
-| DELETE | `/users/me` | Exclui a conta do usuário autenticado (exige senha) |
+| PATCH | `/users/me` | Atualiza nome e/ou renda |
+| DELETE | `/users/me` | Exclui a conta |
 
 ### Gastos
 
 | Método | Rota | Descrição |
 |---|---|---|
-| POST | `/expenses` | Cria um novo gasto |
-| GET | `/expenses` | Lista os gastos do usuário autenticado |
-| PATCH | `/expenses/:id` | Atualiza parcialmente um gasto do usuário autenticado |
-| DELETE | `/expenses/:id` | Remove um gasto do usuário autenticado |
+| POST | `/expenses` | Cria um gasto |
+| GET | `/expenses` | Lista os gastos |
+| PATCH | `/expenses/:id` | Atualiza um gasto |
+| DELETE | `/expenses/:id` | Remove um gasto |
 
 ### Dashboard
 
 | Método | Rota | Descrição |
 |---|---|---|
-| GET | `/dashboard/summary` | Retorna o resumo 50/30/20 do usuário autenticado |
+| GET | `/dashboard/summary` | Retorna o resumo 50/30/20 |
 
 ## Estrutura do projeto
 
 ```text
 src/
-├── app.ts          # Configuração do Express (middlewares e rotas)
-├── server.ts       # Ponto de entrada, inicia o servidor
-├── config/         # Configurações do projeto
-├── controllers/    # Lida com request/response HTTP
-├── db/             # Configuração do banco e schema
-├── errors/         # Classes de erro customizadas
-├── lib/            # Integrações externas (email)
-├── middlewares/    # Autenticação e rate limiting
+├── app.ts          # Configuração do Express
+├── server.ts       # Inicialização do servidor
+├── config/         # Configurações
+├── controllers/    # Requisições e respostas HTTP
+├── db/             # Banco de dados e schemas
+├── errors/         # Erros customizados
+├── lib/            # Integrações externas
+├── middlewares/    # Middlewares
 ├── repositories/   # Acesso ao banco de dados
-├── routes/         # Definição das rotas da API
-├── schemas/        # Validação de dados com Zod
+├── routes/         # Rotas
+├── schemas/        # Validação com Zod
 ├── services/       # Regras de negócio
-└── types/          # Definições de tipos globais (ex: Express Request)
+└── types/          # Tipos globais
 ```
 
 ## Autor
