@@ -10,6 +10,10 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 - 30% — Lazer: gastos pessoais e de entretenimento.
 - 20% — Investimentos: reserva financeira e investimentos.
 
+## Projetos relacionados
+
+- [Rule of Three - Web](https://github.com/kauanpinto/rule-of-three-web) — frontend que consome esta API
+
 ## Índice
 
 1. [Tecnologias](#tecnologias)
