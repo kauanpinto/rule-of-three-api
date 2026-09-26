@@ -20,5 +20,6 @@ authRoutes.patch(
 );
 authRoutes.post('/forgot-password', publicSensitiveLimiter, authController.forgotPassword);
 authRoutes.post('/reset-password', publicSensitiveLimiter, authController.resetPassword);
+authRoutes.get('/me', requireAuth, authController.getCurrentUser);
 
 export default authRoutes;

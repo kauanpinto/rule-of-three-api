@@ -128,10 +128,23 @@ async function resetPassword(token: string, input: ResetPasswordInput) {
   await userRepository.clearResetToken(existingUser.id);
 }
 
+async function getCurrentUser(userId: string) {
+  const existingUser = await userRepository.findUserById(userId);
+
+  if (!existingUser) {
+    throw new NotFoundError('usuário não encontrado');
+  }
+
+  const { password, ...safeUser } = existingUser;
+
+  return safeUser;
+}
+
 export const authService = {
   register,
   login,
   changePassword,
   forgotPassword,
   resetPassword,
+  getCurrentUser,
 };

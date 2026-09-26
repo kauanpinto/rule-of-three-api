@@ -116,6 +116,26 @@ async function resetPassword(req: Request, res: Response) {
   }
 }
 
+async function getCurrentUser(req: Request, res: Response) {
+  try {
+    const userId = req.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: 'Não autenticado' });
+    }
+
+    const user = await authService.getCurrentUser(userId);
+
+    res.status(200).json(user);
+  } catch (error) {
+    if (error instanceof AppError) {
+      res.status(error.status).json({ message: error.message });
+    } else {
+      res.status(500).json({ message: 'Erro interno no servidor' });
+    }
+  }
+}
+
 export const authController = {
   register,
   login,
@@ -123,4 +143,5 @@ export const authController = {
   changePassword,
   forgotPassword,
   resetPassword,
+  getCurrentUser,
 };

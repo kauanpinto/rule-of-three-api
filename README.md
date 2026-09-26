@@ -163,6 +163,7 @@ npm run test
 | PATCH | `/auth/change-password` | Altera a senha |
 | POST | `/auth/forgot-password` | Solicita redefinição de senha |
 | POST | `/auth/reset-password` | Redefine a senha |
+| GET | `/auth/me` | Retorna os dados do usuário autenticado |
 
 ### Usuário
 
