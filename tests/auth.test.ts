@@ -586,3 +586,25 @@ describe('POST /auth/reset-password', () => {
     expect(response.status).toBe(400);
   });
 });
+
+describe('GET /auth/me', () => {
+  beforeEach(async () => {
+    await db.delete(users);
+  });
+
+  it('deve retornar os dados do usuário autenticado', async () => {
+    const cookie = await createTestSession();
+
+    const response = await request(app).get('/auth/me').set('Cookie', cookie);
+
+    expect(response.status).toBe(200);
+    expect(response.body.email).toBe('test@test.com');
+    expect(response.body.password).toBeUndefined();
+  });
+
+  it('deve retornar 401 se o usuário não estiver autenticado', async () => {
+    const response = await request(app).get('/auth/me');
+
+    expect(response.status).toBe(401);
+  });
+});
