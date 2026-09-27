@@ -21,7 +21,7 @@ describe('POST /auth/register', () => {
     const response = await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -34,14 +34,14 @@ describe('POST /auth/register', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste2',
       email: 'test2@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
     const response = await request(app).post('/auth/register').send({
       name: 'Teste2',
       email: 'test2@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 1500,
     });
 
@@ -63,7 +63,7 @@ describe('POST /auth/register', () => {
     const response = await request(app).post('/auth/register').send({
       name: 'T',
       email: 'test4@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 1500,
     });
 
@@ -74,7 +74,7 @@ describe('POST /auth/register', () => {
     const response = await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'email-invalido',
-      password: 'teste123',
+      password: 'Test@123',
       income: 1500,
     });
 
@@ -85,7 +85,7 @@ describe('POST /auth/register', () => {
     const response = await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test5@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: -100,
     });
 
@@ -98,7 +98,7 @@ describe('POST /auth/register', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test6@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -111,11 +111,55 @@ describe('POST /auth/register', () => {
     const response = await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test7@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
     expect(response.status).toBe(201);
+  });
+
+  it('deve retornar 400 se a senha não tiver letra maiúscula', async () => {
+    const response = await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test8@test.com',
+      password: 'test@123',
+      income: 3000,
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 400 se a senha não tiver letra minúscula', async () => {
+    const response = await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test9@test.com',
+      password: 'TEST@123',
+      income: 3000,
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 400 se a senha não tiver número', async () => {
+    const response = await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test10@test.com',
+      password: 'Test@abc',
+      income: 3000,
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 400 se a senha não tiver caractere especial', async () => {
+    const response = await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'test11@test.com',
+      password: 'Test123',
+      income: 3000,
+    });
+
+    expect(response.status).toBe(400);
   });
 });
 
@@ -133,13 +177,13 @@ describe('POST /auth/login', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
     const response = await request(app).post('/auth/login').send({
       email: 'test@test.com',
-      password: 'teste123',
+      password: 'Test@123',
     });
 
     expect(response.status).toBe(200);
@@ -150,13 +194,13 @@ describe('POST /auth/login', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste2',
       email: 'test2@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
     const response = await request(app).post('/auth/login').send({
       email: 'test2@test.com',
-      password: 'testesenhaerrada',
+      password: 'Testesenhaerrada@123',
     });
 
     expect(response.status).toBe(401);
@@ -167,13 +211,13 @@ describe('POST /auth/login', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste3',
       email: 'test3@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
     const response = await request(app).post('/auth/login').send({
       email: 'emailinvalido@test.com',
-      password: 'teste123',
+      password: 'Test@123',
     });
 
     expect(response.status).toBe(401);
@@ -184,7 +228,7 @@ describe('POST /auth/login', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste4',
       email: 'test4@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -201,13 +245,13 @@ describe('POST /auth/login', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste5',
       email: 'test5@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
     const response = await request(app).post('/auth/login').send({
       email: 'emailinvalido',
-      password: 'teste123',
+      password: 'Test@123',
     });
 
     expect(response.status).toBe(400);
@@ -237,8 +281,8 @@ describe('PATCH /auth/change-password', () => {
     const cookie = await createTestSession();
 
     const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
-      currentPassword: 'teste123',
-      newPassword: 'novaSenha456',
+      currentPassword: 'Test@123',
+      newPassword: 'NovaSenha@456',
     });
 
     expect(response.status).toBe(200);
@@ -249,7 +293,7 @@ describe('PATCH /auth/change-password', () => {
 
     const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
       currentPassword: 'senhaErrada',
-      newPassword: 'novaSenha456',
+      newPassword: 'NovaSenha@456',
     });
 
     expect(response.status).toBe(401);
@@ -259,8 +303,8 @@ describe('PATCH /auth/change-password', () => {
     const cookie = await createTestSession('test3@test.com');
 
     const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
-      currentPassword: 'teste123',
-      newPassword: 'teste123',
+      currentPassword: 'Test@123',
+      newPassword: 'Test@123',
     });
 
     expect(response.status).toBe(400);
@@ -270,7 +314,7 @@ describe('PATCH /auth/change-password', () => {
     const cookie = await createTestSession('test4@test.com');
 
     const response = await request(app).patch('/auth/change-password').set('Cookie', cookie).send({
-      currentPassword: 'teste123',
+      currentPassword: 'Test@123',
       newPassword: 'senha',
     });
 
@@ -279,8 +323,8 @@ describe('PATCH /auth/change-password', () => {
 
   it('deve retornar 401 se o usuário não estiver autenticado', async () => {
     const response = await request(app).patch('/auth/change-password').send({
-      currentPassword: 'teste123',
-      newPassword: 'novaSenha456',
+      currentPassword: 'Test@123',
+      newPassword: 'NovaSenha@456',
     });
 
     expect(response.status).toBe(401);
@@ -302,7 +346,7 @@ describe('POST /auth/forgot-password', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -355,7 +399,7 @@ describe('POST /auth/reset-password', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -378,7 +422,7 @@ describe('POST /auth/reset-password', () => {
     const token = url.searchParams.get('token');
 
     const response = await request(app).post(`/auth/reset-password?token=${token}`).send({
-      password: 'teste12345',
+      password: 'Test@12345',
     });
 
     expect(response.status).toBe(200);
@@ -389,7 +433,7 @@ describe('POST /auth/reset-password', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -412,12 +456,12 @@ describe('POST /auth/reset-password', () => {
     const token = url.searchParams.get('token');
 
     await request(app).post(`/auth/reset-password?token=${token}`).send({
-      password: 'teste12345',
+      password: 'Test@12345',
     });
 
     const response = await request(app).post('/auth/login').send({
       email: 'test@test.com',
-      password: 'teste12345',
+      password: 'Test@12345',
     });
 
     expect(response.status).toBe(200);
@@ -427,7 +471,7 @@ describe('POST /auth/reset-password', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test2@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -460,7 +504,7 @@ describe('POST /auth/reset-password', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test3@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -483,7 +527,7 @@ describe('POST /auth/reset-password', () => {
     const token = url.searchParams.get('token');
 
     const response = await request(app).post(`/auth/reset-password?token=${token}`).send({
-      password: 'teste123',
+      password: 'Test@123',
     });
 
     expect(response.status).toBe(400);
@@ -493,7 +537,7 @@ describe('POST /auth/reset-password', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test4@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -516,12 +560,12 @@ describe('POST /auth/reset-password', () => {
     const token = url.searchParams.get('token');
 
     await request(app).post(`/auth/reset-password?token=${token}`).send({
-      password: 'teste12345',
+      password: 'Test@12345',
     });
 
     const response = await request(app).post('/auth/login').send({
       email: 'test4@test.com',
-      password: 'teste123',
+      password: 'Test@123',
     });
 
     expect(response.status).toBe(401);
@@ -531,7 +575,7 @@ describe('POST /auth/reset-password', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test5@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -542,7 +586,7 @@ describe('POST /auth/reset-password', () => {
     const token = 'invalidtoken123456789';
 
     const response = await request(app).post(`/auth/reset-password?token=${token}`).send({
-      password: 'teste12345',
+      password: 'Test@12345',
     });
 
     expect(response.status).toBe(400);
@@ -552,7 +596,7 @@ describe('POST /auth/reset-password', () => {
     await request(app).post('/auth/register').send({
       name: 'Teste',
       email: 'test6@test.com',
-      password: 'teste123',
+      password: 'Test@123',
       income: 3000,
     });
 
@@ -580,7 +624,7 @@ describe('POST /auth/reset-password', () => {
       .where(eq(users.email, 'test6@test.com'));
 
     const response = await request(app).post(`/auth/reset-password?token=${token}`).send({
-      password: 'teste12345',
+      password: 'Test@12345',
     });
 
     expect(response.status).toBe(400);

@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import { userRepository } from '@/repositories/user.repository.js';
 
 export async function createTestSession(email = 'test@test.com') {
-  const hashedPassword = await bcrypt.hash('teste123', 4);
+  const hashedPassword = await bcrypt.hash('Test@123', 4);
 
   const user = await userRepository.createUser({
     name: 'Teste',

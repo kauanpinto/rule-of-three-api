@@ -1,4 +1,4 @@
-import * as z from 'zod';
+import { z } from 'zod';
 
 const deleteAccountSchema = z.object({
   password: z.string().min(1, 'Senha é obrigatória'),

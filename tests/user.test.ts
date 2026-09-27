@@ -86,7 +86,7 @@ describe('DELETE /users/me', () => {
     const cookie = await createTestSession();
 
     const response = await request(app).delete('/users/me').set('Cookie', cookie).send({
-      password: 'teste123',
+      password: 'Test@123',
     });
 
     expect(response.status).toBe(200);
@@ -105,7 +105,7 @@ describe('DELETE /users/me', () => {
 
   it('deve retornar 401 se o usuário não estiver autenticado', async () => {
     const response = await request(app).delete('/users/me').send({
-      password: 'teste123',
+      password: 'Test@123',
     });
 
     expect(response.status).toBe(401);
@@ -115,12 +115,12 @@ describe('DELETE /users/me', () => {
     const cookie = await createTestSession('test3@test.com');
 
     await request(app).delete('/users/me').set('Cookie', cookie).send({
-      password: 'teste123',
+      password: 'Test@123',
     });
 
     const response = await request(app).post('/auth/login').send({
       email: 'test3@test.com',
-      password: 'teste123',
+      password: 'Test@123',
     });
 
     expect(response.status).toBe(401);
