@@ -3,16 +3,15 @@ import { z } from 'zod';
 const categoryEnum = z.enum(['ESSENTIALS', 'LEISURE', 'INVESTMENT']);
 
 const createExpenseSchema = z.object({
-  title: z.string().min(1, 'Nome muito curto'),
-  description: z.string().optional(),
-  amount: z.number().positive('Gasto deve ser maior que zero'),
+  title: z.string().trim().min(1, 'Título é obrigatório'),
+  description: z.string().trim().optional(),
+  amount: z.number({ error: 'Informe seu gasto' }).positive('Gasto deve ser maior que zero'),
   category: categoryEnum,
 });
 
-export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
-
 const updateExpenseSchema = createExpenseSchema.partial();
 
+export type CreateExpenseInput = z.infer<typeof createExpenseSchema>;
 export type UpdateExpenseInput = z.infer<typeof updateExpenseSchema>;
 
 export const expenseSchema = {

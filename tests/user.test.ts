@@ -70,6 +70,16 @@ describe('PATCH /users/me', () => {
 
     expect(response.status).toBe(401);
   });
+
+  it('deve retornar 400 se a renda vier em formato inválido', async () => {
+    const cookie = await createTestSession('test6@test.com');
+
+    const response = await request(app).patch('/users/me').set('Cookie', cookie).send({
+      income: 'abc',
+    });
+
+    expect(response.status).toBe(400);
+  });
 });
 
 describe('DELETE /users/me', () => {

@@ -94,6 +94,29 @@ describe('POST /expenses', () => {
 
     expect(response.status).toBe(401);
   });
+
+  it('deve retornar 400 se o título tiver apenas espaços', async () => {
+    const cookie = await createTestSession('test6@test.com');
+
+    const response = await request(app).post('/expenses').set('Cookie', cookie).send({
+      title: '   ',
+      amount: 100,
+      category: 'ESSENTIALS',
+    });
+
+    expect(response.status).toBe(400);
+  });
+
+  it('deve retornar 400 se o valor não for informado', async () => {
+    const cookie = await createTestSession('test7@test.com');
+
+    const response = await request(app).post('/expenses').set('Cookie', cookie).send({
+      title: 'Teste',
+      category: 'ESSENTIALS',
+    });
+
+    expect(response.status).toBe(400);
+  });
 });
 
 describe('GET /expenses', () => {

@@ -161,6 +161,56 @@ describe('POST /auth/register', () => {
 
     expect(response.status).toBe(400);
   });
+
+  it('deve normalizar o e-mail para minúsculas ao registrar', async () => {
+    const response = await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'Teste12@Test.com',
+      password: 'Senha@123',
+      income: 3000,
+    });
+
+    expect(response.body.email).toBe('teste12@test.com');
+  });
+
+  it('deve retornar 409 se o e-mail já existir, ignorando maiúsculas/minúsculas', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'Teste13@Test.com',
+      password: 'Senha@123',
+      income: 3000,
+    });
+
+    const response = await request(app).post('/auth/register').send({
+      name: 'Teste2',
+      email: 'teste13@test.com',
+      password: 'Senha@123',
+      income: 3000,
+    });
+
+    expect(response.status).toBe(409);
+  });
+
+  it('deve remover espaços do nome ao registrar', async () => {
+    const response = await request(app).post('/auth/register').send({
+      name: '  Teste  ',
+      email: 'teste14@test.com',
+      password: 'Senha@123',
+      income: 3000,
+    });
+
+    expect(response.body.name).toBe('Teste');
+  });
+
+  it('deve retornar 400 se a renda não for informada', async () => {
+    const response = await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'teste15@test.com',
+      password: 'Senha@123',
+    });
+
+    expect(response.status).toBe(400);
+  });
 });
 
 describe('POST /auth/login', () => {
@@ -256,6 +306,22 @@ describe('POST /auth/login', () => {
 
     expect(response.status).toBe(400);
     expect(response.headers['set-cookie']).toBeUndefined();
+  });
+
+  it('deve autenticar mesmo com e-mail em caixa diferente da cadastrada', async () => {
+    await request(app).post('/auth/register').send({
+      name: 'Teste',
+      email: 'teste6@test.com',
+      password: 'Senha@123',
+      income: 3000,
+    });
+
+    const response = await request(app).post('/auth/login').send({
+      email: 'TESTE6@TEST.COM',
+      password: 'Senha@123',
+    });
+
+    expect(response.status).toBe(200);
   });
 });
 
