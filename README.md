@@ -35,6 +35,7 @@ A aplicação organiza os gastos do usuário de acordo com sua renda, distribuin
 - [TypeScript](https://www.typescriptlang.org/) ^6.0.3
 - [Drizzle ORM](https://orm.drizzle.team/) ^1.0.0-rc.4
 - [PostgreSQL](https://www.postgresql.org/) 18
+- [Zod](https://zod.dev/) ^4.5.4
 - [Vitest](https://vitest.dev/) ^5.0.0
 - [Supertest](https://github.com/ladjs/supertest) ^7.2.2
 - [Resend](https://resend.com/) ^6.26.0
